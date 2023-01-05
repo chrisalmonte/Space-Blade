@@ -1,2 +1,4 @@
 # Space-Blade
-A side-scrolling shmup with some experimental mechanics.
+A 2D side-scrolling shoot 'em up with some experimental mechanics.
+
+Credits: Christian Almonte, Emiliano Banda
