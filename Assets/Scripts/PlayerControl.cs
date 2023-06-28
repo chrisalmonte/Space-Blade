@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerInput input;
 
     [Header("Movement Parameters")]
-    [SerializeField] private float movForce = 30f;
+    [SerializeField] private float movForce = 70f;
 
     private InputAction shoot;
     private InputAction bomb;
@@ -40,13 +40,6 @@ public class PlayerController : MonoBehaviour
         shoot = input.actions["Shoot"];
         bomb = input.actions["Bomb"];
         bladeMode = input.actions["Blade"];
-    }
-
-    private void Start() { }
-
-    void Update()
-    {
-        //Move();
     }
 
     private void FixedUpdate()
