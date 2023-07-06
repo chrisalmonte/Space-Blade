@@ -30,18 +30,17 @@ public class WeaponSystem : MonoBehaviour
 
     private void Awake()
     {
-        defaultWeapon = GameObject.Instantiate(defaultWeapon, transform);
         shoot = input.actions["Shoot"];
-        SwitchToDefaultMWeapon();
+        InitializeDeafultMWeapon();
     }
 
-    public void SetSpecialMWeapon(MainWeapon newWeapon)
+    public void EquipSpecialMWeapon(MainWeapon newWeapon)
     {
-        //Stop current shot and resume if it was being held
-        //destroy last weapon if not null
+        UnequipCurrentMWeapon();
         //maybe attach to spawn point transform
         currentWeapon = GameObject.Instantiate(newWeapon, transform);
         remainingAmmo = newWeapon.InitialAmmo;
+        currentWeapon.AmmoExpended += DecreaseAmmo;
     }
 
     private void Shoot()
@@ -52,26 +51,41 @@ public class WeaponSystem : MonoBehaviour
     private void CancelShoot()
     {
         currentWeapon.StopFire();
-    }
-
-    private void SwitchToDefaultMWeapon()
-    {
-        currentWeapon = defaultWeapon;
-        remainingAmmo = 999;
-    }
-
-    private void DecreaseAmmo()
-    {
-        remainingAmmo -= 1;
-
-        if (remainingAmmo < 1) {
-            CancelShoot();
-            SwitchToDefaultMWeapon();
-        }
-    }
+    }    
 
     public void IncreaseAmmo(int amount)
     {
         remainingAmmo += amount;
-    } 
+    }
+
+    private void DecreaseAmmo(object sender, System.EventArgs e)
+    {
+        remainingAmmo -= 1;
+        if (remainingAmmo < 1) { SwitchToDefaultMWeapon(); }
+    }
+
+    private void SwitchToDefaultMWeapon()
+    {
+        if (currentWeapon == defaultWeapon) { return; }
+
+        UnequipCurrentMWeapon();
+        currentWeapon = defaultWeapon;
+        remainingAmmo = currentWeapon.InitialAmmo;
+    }
+
+    private void UnequipCurrentMWeapon()
+    {
+        if (currentWeapon == null) { return; }
+
+        currentWeapon.AmmoExpended -= DecreaseAmmo;
+        CancelShoot();
+        if (currentWeapon != defaultWeapon) { currentWeapon.Discard(); }
+        currentWeapon = null;
+    }
+
+    private void InitializeDeafultMWeapon()
+    {
+        defaultWeapon = GameObject.Instantiate(defaultWeapon, transform);
+        SwitchToDefaultMWeapon();
+    }
 }

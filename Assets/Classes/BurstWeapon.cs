@@ -56,5 +56,6 @@ public class BurstWeapon : MainWeapon
         shot.SetSpeed(shotSpeed);
         shot.SetDirection(shotDirection);
         shot.gameObject.SetActive(true);
+        OnAmmoExpended();
     }
 }

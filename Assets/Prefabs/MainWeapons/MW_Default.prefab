@@ -44,10 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05eb147dd4cd511489d1b63886d827c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: New Weapon Name
+  weaponName: Default
   power: 1
   initialAmmo: 100
-  weaponSprite: {fileID: 0}
   fireRate: 1
   shotSpeed: 12
   ammoPrefab: {fileID: 451882636998692569, guid: d4631cacc7a6a4841bfe92b5462c4302, type: 3}
