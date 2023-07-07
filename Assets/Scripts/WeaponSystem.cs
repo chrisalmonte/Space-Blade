@@ -15,6 +15,24 @@ public class WeaponSystem : MonoBehaviour
     private MainWeapon currentWeapon;
     private Coroutine atkDirectionDelayCoroutine;
     private Vector2 atkDirection;
+    private InputAction shoot;
+
+    private void Awake()
+    {
+        shoot = input.actions["SetAttackDirection"];
+        InitializeDeafultMWeapon();
+    }
+
+    private void OnEnable()
+    {
+        shoot.Enable();
+    }
+
+    private void OnDisable()
+    {
+        CancelShoot();
+        shoot.Disable();
+    }
 
     public void OnSetAttackDirection(InputValue value) 
     {
@@ -29,16 +47,12 @@ public class WeaponSystem : MonoBehaviour
                 atkDirectionDelayCoroutine = StartCoroutine(InputRegisterDelay()); 
             }
         }        
-    }
-
-    private void Awake()
-    {
-        InitializeDeafultMWeapon();
-    }
+    }    
 
     public void EquipSpecialMWeapon(MainWeapon newWeapon)
     {
         UnequipCurrentMWeapon();
+        //if holding down shoot, stop and restart shot
         //maybe attach to spawn point transform
         currentWeapon = GameObject.Instantiate(newWeapon, transform);
         remainingAmmo = newWeapon.InitialAmmo;
