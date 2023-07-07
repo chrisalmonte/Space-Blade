@@ -47,6 +47,6 @@ MonoBehaviour:
   weaponName: Default
   power: 1
   initialAmmo: 100
-  fireRate: 1
-  shotSpeed: 12
+  fireRate: 0.1
+  shotSpeed: 25
   ammoPrefab: {fileID: 451882636998692569, guid: d4631cacc7a6a4841bfe92b5462c4302, type: 3}

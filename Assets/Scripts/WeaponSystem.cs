@@ -9,28 +9,30 @@ public class WeaponSystem : MonoBehaviour
 {
     [SerializeField] private MainWeapon defaultWeapon;
     [SerializeField] private PlayerInput input;
+    [SerializeField] private float atkDirectionInputDelay = 0.02f;
 
-    private InputAction shoot;
-    private MainWeapon currentWeapon;
     private int remainingAmmo;
+    private MainWeapon currentWeapon;
+    private Coroutine atkDirectionDelayCoroutine;
+    private Vector2 atkDirection;
 
-    public void OnSetAttackDirection(InputValue value) => currentWeapon.UpdateShotDirection(value.Get<Vector2>());
-
-    private void OnEnable()
+    public void OnSetAttackDirection(InputValue value) 
     {
-        shoot.performed += ctx => Shoot();
-        shoot.canceled += ctx => CancelShoot();
-    }
+        atkDirection = value.Get<Vector2>();
 
-    private void OnDisable()
-    {
-        shoot.performed -= ctx => Shoot();
-        shoot.canceled -= ctx => CancelShoot();
+        if (atkDirection == Vector2.zero) { CancelShoot(); }
+        
+        else
+        {
+            if (atkDirectionDelayCoroutine == null) 
+            {
+                atkDirectionDelayCoroutine = StartCoroutine(InputRegisterDelay()); 
+            }
+        }        
     }
 
     private void Awake()
     {
-        shoot = input.actions["Shoot"];
         InitializeDeafultMWeapon();
     }
 
@@ -50,6 +52,12 @@ public class WeaponSystem : MonoBehaviour
 
     private void CancelShoot()
     {
+        if (atkDirectionDelayCoroutine != null) 
+        {
+            StopCoroutine(atkDirectionDelayCoroutine);
+            atkDirectionDelayCoroutine = null;
+        }
+        
         currentWeapon.StopFire();
     }    
 
@@ -87,5 +95,13 @@ public class WeaponSystem : MonoBehaviour
     {
         defaultWeapon = GameObject.Instantiate(defaultWeapon, transform);
         SwitchToDefaultMWeapon();
+    }
+
+    private IEnumerator InputRegisterDelay()
+    {
+        yield return new WaitForSeconds(atkDirectionInputDelay);
+        currentWeapon.UpdateShotDirection(atkDirection);
+        Shoot();
+        atkDirectionDelayCoroutine = null;
     }
 }
