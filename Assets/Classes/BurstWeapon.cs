@@ -6,7 +6,7 @@ public class BurstWeapon : MainWeapon
 {
     [SerializeField] private float fireRate = 0.3f;
     [SerializeField] private float shotSpeed = 12f;
-    [SerializeField] public Proyectile ammoPrefab = null;
+    [SerializeField] private Proyectile ammoPrefab = null;
 
     private bool shootRequested;
     private bool coolingDown;

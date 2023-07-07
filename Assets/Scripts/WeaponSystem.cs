@@ -25,38 +25,39 @@ public class WeaponSystem : MonoBehaviour
 
     private void OnEnable()
     {
-        shoot.Enable();
+        shoot.performed += SetAttackDirection;
+        shoot.canceled += SetAttackDirection;
     }
 
     private void OnDisable()
     {
         CancelShoot();
-        shoot.Disable();
+        shoot.performed -= SetAttackDirection;
+        shoot.canceled -= SetAttackDirection;
     }
 
-    public void OnSetAttackDirection(InputValue value) 
+    public void SetAttackDirection(InputAction.CallbackContext ctx) 
     {
-        atkDirection = value.Get<Vector2>();
+        if (ctx.canceled) 
+        { 
+            CancelShoot();
+            return;
+        }
 
-        if (atkDirection == Vector2.zero) { CancelShoot(); }
-        
-        else
+        atkDirection = shoot.ReadValue<Vector2>();
+
+        if (atkDirectionDelayCoroutine == null)
         {
-            if (atkDirectionDelayCoroutine == null) 
-            {
-                atkDirectionDelayCoroutine = StartCoroutine(InputRegisterDelay()); 
-            }
-        }        
-    }    
+            atkDirectionDelayCoroutine = StartCoroutine(InputRegisterDelay());
+        }
+    }
 
-    public void EquipSpecialMWeapon(MainWeapon newWeapon)
+    private IEnumerator InputRegisterDelay()
     {
-        UnequipCurrentMWeapon();
-        //if holding down shoot, stop and restart shot
-        //maybe attach to spawn point transform
-        currentWeapon = GameObject.Instantiate(newWeapon, transform);
-        remainingAmmo = newWeapon.InitialAmmo;
-        currentWeapon.AmmoExpended += DecreaseAmmo;
+        yield return new WaitForSeconds(atkDirectionInputDelay);
+        currentWeapon.UpdateShotDirection(atkDirection);
+        Shoot();
+        atkDirectionDelayCoroutine = null;
     }
 
     private void Shoot()
@@ -66,14 +67,25 @@ public class WeaponSystem : MonoBehaviour
 
     private void CancelShoot()
     {
-        if (atkDirectionDelayCoroutine != null) 
+        if (atkDirectionDelayCoroutine != null)
         {
             StopCoroutine(atkDirectionDelayCoroutine);
             atkDirectionDelayCoroutine = null;
         }
-        
+
+        atkDirection = Vector2.zero;
         currentWeapon.StopFire();
-    }    
+    }
+
+    public void EquipSpecialMWeapon(MainWeapon newWeapon)
+    {
+        UnequipCurrentMWeapon();
+        //if holding down shoot, stop and restart shot
+        //maybe attach to spawn point transform
+        currentWeapon = GameObject.Instantiate(newWeapon, transform);
+        remainingAmmo = newWeapon.InitialAmmo;
+        currentWeapon.AmmoExpended += DecreaseAmmo;
+    }        
 
     public void IncreaseAmmo(int amount)
     {
@@ -109,13 +121,5 @@ public class WeaponSystem : MonoBehaviour
     {
         defaultWeapon = GameObject.Instantiate(defaultWeapon, transform);
         SwitchToDefaultMWeapon();
-    }
-
-    private IEnumerator InputRegisterDelay()
-    {
-        yield return new WaitForSeconds(atkDirectionInputDelay);
-        currentWeapon.UpdateShotDirection(atkDirection);
-        Shoot();
-        atkDirectionDelayCoroutine = null;
     }
 }
