@@ -7,9 +7,13 @@ using UnityEngine.InputSystem;
 
 public class WeaponSystem : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private MainWeapon defaultWeapon;
     [SerializeField] private PlayerInput input;
+
+    [Header("Internal Properties")]
     [SerializeField] private float atkDirectionInputDelay = 0.02f;
+    [SerializeField] private int maxAmmoValue = 9999;
 
     private int remainingAmmo;
     private MainWeapon currentWeapon;
@@ -79,17 +83,23 @@ public class WeaponSystem : MonoBehaviour
 
     public void EquipSpecialMWeapon(MainWeapon newWeapon)
     {
-        UnequipCurrentMWeapon();
         //if holding down shoot, stop and restart shot
         //maybe attach to spawn point transform
+        UnequipCurrentMWeapon();
         currentWeapon = GameObject.Instantiate(newWeapon, transform);
-        remainingAmmo = newWeapon.InitialAmmo;
+        SetMWeaponProperties();
         currentWeapon.AmmoExpended += DecreaseAmmo;
-    }        
+    }
+    
+    private void SetMWeaponProperties()
+    {
+        remainingAmmo = currentWeapon.InitialAmmo;
+        currentWeapon.Initialize();
+    }
 
     public void IncreaseAmmo(int amount)
     {
-        remainingAmmo += amount;
+        remainingAmmo =  Mathf.Min(remainingAmmo + amount,maxAmmoValue);
     }
 
     private void DecreaseAmmo(object sender, System.EventArgs e)
@@ -104,16 +114,22 @@ public class WeaponSystem : MonoBehaviour
 
         UnequipCurrentMWeapon();
         currentWeapon = defaultWeapon;
-        remainingAmmo = currentWeapon.InitialAmmo;
+        SetMWeaponProperties();
     }
 
     private void UnequipCurrentMWeapon()
     {
         if (currentWeapon == null) { return; }
 
-        currentWeapon.AmmoExpended -= DecreaseAmmo;
         CancelShoot();
-        if (currentWeapon != defaultWeapon) { currentWeapon.Discard(); }
+
+        if (currentWeapon != defaultWeapon) {
+            currentWeapon.AmmoExpended -= DecreaseAmmo;
+            currentWeapon.Discard();
+        }
+
+        else currentWeapon.Deactivate();
+
         currentWeapon = null;
     }
 

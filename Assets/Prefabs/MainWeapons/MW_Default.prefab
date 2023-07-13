@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2011359257515990104
 MonoBehaviour:
@@ -49,4 +49,5 @@ MonoBehaviour:
   initialAmmo: 100
   fireRate: 0.1
   shotSpeed: 25
+  shotDistance: 30
   ammoPrefab: {fileID: 451882636998692569, guid: d4631cacc7a6a4841bfe92b5462c4302, type: 3}

@@ -18,8 +18,10 @@ public abstract class MainWeapon : MonoBehaviour
     public int InitialAmmo => initialAmmo;
 
     public void UpdateShotDirection(Vector2 newDirection) => shotDirection = newDirection;
+    protected void OnAmmoExpended() => AmmoExpended?.Invoke(this, EventArgs.Empty);
     public virtual void Discard() => Destroy(gameObject);
+    public abstract void Initialize();
+    public abstract void Deactivate();
     public abstract void Fire();
     public abstract void StopFire();
-    protected void OnAmmoExpended() => AmmoExpended?.Invoke(this, EventArgs.Empty);
 }
