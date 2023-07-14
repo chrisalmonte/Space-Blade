@@ -10,32 +10,36 @@ public class BurstWeapon : MainWeapon
     [SerializeField] private float shotDistance = 50f;
     [SerializeField] private Proyectile ammoPrefab = null;
 
-    [Header("Technical")]
+    [Header("Internal Properties")]
     [SerializeField] [Min(10)] private int shotPoolDefaultSize = 50;
     [SerializeField] [Min(200)] private int shotPoolMaxSize = 400;
 
     private bool shootRequested;
-    private bool coolingDown;
     private Coroutine shootCoroutine;
+    private Coroutine coolDownCoroutine;
     private IObjectPool<Proyectile> shotPool;
 
     public override void Initialize()
     {
         gameObject.SetActive(true);
+
         if (shotPool != null) return;
-        shotPool = new ObjectPool<Proyectile>(ShotInstance, OnTakeShotFromPool, OnReturnShotToPool, OnDestroyShotInstance, true, shotPoolDefaultSize, shotPoolMaxSize);
+        shotPool = new ObjectPool<Proyectile>(ShotInstance, OnTakeShotFromPool, OnReturnShotToPool, 
+            OnDestroyShotInstance, true, shotPoolDefaultSize, shotPoolMaxSize);
     }
 
     public override void Deactivate()
     {
-        if (shotPool != null) shotPool.Clear();
+        StopFire();
+        HaltCRoutines();
+        if (shotPool != null) { shotPool.Clear(); } 
         gameObject.SetActive(false);
     }
 
     public override void Fire()
     {
         if (shootCoroutine != null) { return; }
-        
+
         shootRequested = true;
         shootCoroutine = StartCoroutine(BurstShot());
     }
@@ -46,10 +50,10 @@ public class BurstWeapon : MainWeapon
     {
         while (shootRequested)
         {
-            if (!coolingDown)
+            if (coolDownCoroutine == null)
             {
                 DeployShot();
-                StartCoroutine(WeaponCooldown());
+                coolDownCoroutine = StartCoroutine(WeaponCooldown());
             }
             yield return null;
         }
@@ -59,17 +63,41 @@ public class BurstWeapon : MainWeapon
 
     private IEnumerator WeaponCooldown()
     {
-        coolingDown = true;
         yield return new WaitForSeconds(fireRate);
-        coolingDown = false;
+        coolDownCoroutine = null;
     }
 
     private void DeployShot()
     {
+        if (shotPool == null) return;
         shotPool.Get();
         OnAmmoExpended();        
     }
-    
+
+    private void HaltCRoutines()
+    {
+        if (coolDownCoroutine != null)
+        {
+            StopCoroutine(coolDownCoroutine);
+            coolDownCoroutine = null;
+        }
+
+        if (shootCoroutine != null)
+        {
+            StopCoroutine(shootCoroutine);
+            shootCoroutine = null;
+        }
+    }
+
+    public override void Discard()
+    {
+        StopFire();
+        HaltCRoutines();
+        shotPool.Clear();
+        Destroy(gameObject);
+    }
+
+    #region Shot Pooling
     Proyectile ShotInstance()
     {
         Proyectile shot = GameObject.Instantiate(ammoPrefab, transform.position, Quaternion.identity);
@@ -93,12 +121,7 @@ public class BurstWeapon : MainWeapon
 
     void OnDestroyShotInstance(Proyectile shot)
     {
-        if (!shot.gameObject.activeSelf) { Destroy(shot.gameObject); }
+        Destroy(shot.gameObject);
     }
-
-    public override void Discard()
-    {
-        shotPool.Clear();
-        Destroy(gameObject);
-    }
+    #endregion
 }

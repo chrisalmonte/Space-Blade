@@ -23,8 +23,8 @@ public class Proyectile : Shootable
     }
 
     public void Deactivate() {
-        gameObject.SetActive(false);
         direction = Vector2.zero;
+        gameObject.SetActive(false);
 
         if (shotPool != null) { shotPool.Release(this); }
         else Destroy(gameObject);
