@@ -7,6 +7,7 @@ public class Proyectile : Shootable
 {
     private float speed;
     private float maxDistance;
+    private bool destroyAfterUse;
     private Vector2 startPosition;
     private IObjectPool<Proyectile> shotPool;
 
@@ -26,8 +27,8 @@ public class Proyectile : Shootable
         direction = Vector2.zero;
         gameObject.SetActive(false);
 
-        if (shotPool != null) { shotPool.Release(this); }
-        else Destroy(gameObject);
+        if (destroyAfterUse || shotPool == null) { Destroy(gameObject); }
+        else shotPool.Release(this);
     }
 
     private void Move()
@@ -35,4 +36,6 @@ public class Proyectile : Shootable
         transform.Translate(direction * speed * Time.deltaTime);
         if (Vector2.Distance(transform.position, startPosition) > maxDistance) Deactivate();
     }
+
+    public void OnWeaponDisabled(object sender, System.EventArgs e) => destroyAfterUse = true;
 }

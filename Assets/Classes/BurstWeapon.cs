@@ -1,4 +1,5 @@
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -19,6 +20,8 @@ public class BurstWeapon : MainWeapon
     private Coroutine coolDownCoroutine;
     private IObjectPool<Proyectile> shotPool;
 
+    public event EventHandler WeaponDisabled;
+
     public override void Initialize()
     {
         gameObject.SetActive(true);
@@ -32,7 +35,8 @@ public class BurstWeapon : MainWeapon
     {
         StopFire();
         HaltCRoutines();
-        if (shotPool != null) { shotPool.Clear(); } 
+        if (shotPool != null) { shotPool.Clear(); }
+        OnWeaponDisabled();
         gameObject.SetActive(false);
     }
 
@@ -94,21 +98,25 @@ public class BurstWeapon : MainWeapon
         StopFire();
         HaltCRoutines();
         shotPool.Clear();
+        OnWeaponDisabled();
         Destroy(gameObject);
     }
+
+    protected virtual void OnWeaponDisabled() => WeaponDisabled.Invoke(this, EventArgs.Empty);
 
     #region Shot Pooling
     Proyectile ShotInstance()
     {
         Proyectile shot = GameObject.Instantiate(ammoPrefab, transform.position, Quaternion.identity);
         shot.Initialize(shotPool, shotSpeed, shotDistance);
-        shot.gameObject.SetActive(false);
+        shot.gameObject.SetActive(false);        
         return shot;
     }
 
     void OnReturnShotToPool(Proyectile shot)
     {
         shot.transform.position = Vector2.zero;
+        WeaponDisabled -= shot.OnWeaponDisabled;
     }
 
     void OnTakeShotFromPool(Proyectile shot)
@@ -116,6 +124,7 @@ public class BurstWeapon : MainWeapon
         shot.SetDirection(shotDirection);
         shot.transform.position = transform.position;
         shot.gameObject.SetActive(true);
+        WeaponDisabled += shot.OnWeaponDisabled;
         OnAmmoExpended();
     }
 
