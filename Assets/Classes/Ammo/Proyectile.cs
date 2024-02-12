@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class Proyectile : Shootable
+public class Proyectile : MonoBehaviour
 {
+
     private float speed;
     private float maxDistance;
     private bool destroyAfterUse;
@@ -24,7 +25,6 @@ public class Proyectile : Shootable
     }
 
     public void Deactivate() {
-        direction = Vector2.zero;
         gameObject.SetActive(false);
 
         if (destroyAfterUse || shotPool == null) { Destroy(gameObject); }
@@ -33,7 +33,7 @@ public class Proyectile : Shootable
 
     private void Move()
     {
-        transform.Translate(direction * speed * Time.deltaTime);
+        transform.Translate(Vector3.right * speed * Time.deltaTime);
         if (Vector2.Distance(transform.position, startPosition) > maxDistance) Deactivate();
     }
 

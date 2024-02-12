@@ -531,7 +531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dd4407ec53feaa459307a1f1face915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultWeapon: {fileID: 2011359257515990104, guid: 0ed5ff56d7fe5af4892349c6f4ec7035, type: 3}
+  defaultWeapon: {fileID: 8980096107776906133, guid: 36a027ee400a01247adc58c8c2a5523a, type: 3}
   input: {fileID: 689623556}
   atkDirectionInputDelay: 0.02
   maxAmmoValue: 9999

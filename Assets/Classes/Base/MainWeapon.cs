@@ -11,17 +11,17 @@ public abstract class MainWeapon : MonoBehaviour
     [SerializeField] [Min(1)] private int initialAmmo = 100;
 
     public event EventHandler AmmoExpended;
-    protected Vector2 shotDirection;
+    protected Quaternion shotRotation;
 
     public string WeaponName => weaponName;
     public int Power => power;
     public int InitialAmmo => initialAmmo;
 
-    public void UpdateShotDirection(Vector2 newDirection) => shotDirection = newDirection;
     protected void OnAmmoExpended() => AmmoExpended?.Invoke(this, EventArgs.Empty);
-    public virtual void Discard() => Destroy(gameObject);
+    public virtual void UpdateShotDirection(Vector2 newDirection) => shotRotation = Quaternion.FromToRotation(Vector3.right, newDirection);
+    public virtual void Deactivate() => gameObject.SetActive(false);
     public abstract void Initialize();
-    public abstract void Deactivate();
+    public abstract void Discard();
     public abstract void Fire();
     public abstract void StopFire();
 }

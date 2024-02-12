@@ -6,6 +6,7 @@ using UnityEngine.Pool;
 
 public class BurstWeapon : MainWeapon
 {
+    [Header("Weapon Properties")]
     [SerializeField] private float fireRate = 0.3f;
     [SerializeField] private float shotSpeed = 12f;
     [SerializeField] private float shotDistance = 50f;
@@ -121,7 +122,7 @@ public class BurstWeapon : MainWeapon
 
     void OnTakeShotFromPool(Proyectile shot)
     {
-        shot.SetDirection(shotDirection);
+        shot.transform.rotation = shotRotation;
         shot.transform.position = transform.position;
         shot.gameObject.SetActive(true);
         WeaponDisabled += shot.OnWeaponDisabled;
