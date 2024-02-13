@@ -18,8 +18,8 @@ public class LaserWeapon : MainWeapon
 
     public override void UpdateShotDirection(Vector2 newDirection)
     {
-        base.UpdateShotDirection(newDirection);
-        
+        shotRotation = Quaternion.LookRotation(Vector3.forward, newDirection) * Quaternion.Euler(0, 0, 90);
+
         if (!firing) return;
 
         if (rotateCoroutine != null) StopCoroutine(rotateCoroutine);
