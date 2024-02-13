@@ -5,7 +5,6 @@ using UnityEngine.Pool;
 
 public class Proyectile : MonoBehaviour
 {
-
     private float speed;
     private float maxDistance;
     private bool destroyAfterUse;

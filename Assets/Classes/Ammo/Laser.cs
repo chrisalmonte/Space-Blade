@@ -13,23 +13,22 @@ public class Laser : MonoBehaviour
 
     private LineRenderer lineRenderer;
 
-    void Start()
-    {
-        lineRenderer = GetComponent<LineRenderer>();
-        gameObject.SetActive(false);
-    }
-
     private void Update()
     {
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, transform.position + (transform.right * 90));
     }
 
-    public void Activate()
+    public void InitializeParameters()
     {
         lineRenderer = GetComponent<LineRenderer>();
+        gameObject.SetActive(false);
+    }
+
+    public void Activate()
+    {
         lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, Vector3.right * maxLength);
+        lineRenderer.SetPosition(1, transform.right * maxLength);
         gameObject.SetActive(true);
     }
 

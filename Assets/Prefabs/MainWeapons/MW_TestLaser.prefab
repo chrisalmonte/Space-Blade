@@ -48,12 +48,10 @@ MonoBehaviour:
   weaponName: New Weapon Name
   power: 1
   initialAmmo: 100
-  damageRate: 0.2
   ammoExpendRate: 0.05
-  shotDistance: 50
+  activeAfterCancel: 0.15
   turnSpeed: 2.1
   turnSmoothLvl: 2
-  cooldownTime: 2
   laser: {fileID: 8405236669527956482}
 --- !u!1001 &3363701802545563469
 PrefabInstance:
