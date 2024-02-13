@@ -63,6 +63,7 @@ public class LaserWeapon : MainWeapon
     public override void Discard()
     {
         TurnLaserOff();
+        Destroy(gameObject);
     }
 
     private void TurnLaserOff()
