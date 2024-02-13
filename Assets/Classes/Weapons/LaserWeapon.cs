@@ -11,6 +11,7 @@ public class LaserWeapon : MainWeapon
     [SerializeField] private Laser laser = null;
 
     private bool firing = false;
+    private Vector2 directionCache;
     private Coroutine ammoExpendCoroutine;
     private Coroutine rotateCoroutine;
     private Coroutine cancelCoroutine;
@@ -42,12 +43,16 @@ public class LaserWeapon : MainWeapon
 
     public override void UpdateShotDirection(Vector2 newDirection)
     {
+        if (Vector2.Equals(newDirection, directionCache)) return;
+
         shotRotation = Quaternion.LookRotation(Vector3.forward, newDirection) * Quaternion.Euler(0, 0, 90);
+        directionCache = newDirection;
 
-        if (!firing) return;
-
-        if (rotateCoroutine != null) StopCoroutine(rotateCoroutine);
-        rotateCoroutine = StartCoroutine(RotateLaser());
+        if (firing)
+        {
+            if (rotateCoroutine != null) StopCoroutine(rotateCoroutine);
+            rotateCoroutine = StartCoroutine(RotateLaser());
+        }
     }
 
     public override void Initialize()
