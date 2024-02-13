@@ -4,12 +4,10 @@ using UnityEngine;
 
 public class LaserWeapon : MainWeapon
 {
-    [SerializeField] private float damageRate = 0.2f;
     [SerializeField] private float ammoExpendRate = 0.05f;
-    [SerializeField] private float shotDistance = 50f;
+    [SerializeField] private float activeAfterBtnUp = 0.4f;
     [SerializeField] private float turnSpeed = 2.1f;
     [SerializeField] [Range(1, 4)] private int turnSmoothLvl = 3;
-    [SerializeField] private float cooldownTime = 2;
     [SerializeField] private Laser laser = null;
 
     private bool firing;
@@ -28,7 +26,7 @@ public class LaserWeapon : MainWeapon
 
     public override void Fire()
     {
-        if (laser == null || ammoExpendCoroutine != null) { return; } //|| laswerInstance.IsActve
+        if (laser == null || ammoExpendCoroutine != null) { return; } //|| laserInstance.IsActve
 
         laser.transform.rotation = shotRotation;
         laser.Activate();
@@ -85,9 +83,7 @@ public class LaserWeapon : MainWeapon
         float t = 0;
         Quaternion fromRot = laser.transform.rotation;
 
-        Vector2.SignedAngle(laser.transform.rotation.eulerAngles, shotRotation.eulerAngles);
-
-        while (firing)
+        while (firing && t < 1)
         {
             t += turnSpeed * Time.deltaTime;
             laser.transform.rotation = Quaternion.Lerp(fromRot, shotRotation, Mathf.Pow(t, turnSmoothLvl));

@@ -6,8 +6,10 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
-    [SerializeField] private float length = 25;
-    [SerializeField] private bool stopsWHit = true;
+    [SerializeField] private float maxLength = 25;
+    [SerializeField] private float damageRate = 0.2f;
+    [SerializeField] private float chargeTime = 0.7f;
+    [SerializeField] private bool penetrates = true;
 
     private LineRenderer lineRenderer;
 
@@ -27,7 +29,7 @@ public class Laser : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, Vector3.right * length);
+        lineRenderer.SetPosition(1, Vector3.right * maxLength);
         gameObject.SetActive(true);
     }
 
