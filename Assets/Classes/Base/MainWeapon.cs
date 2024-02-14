@@ -7,15 +7,15 @@ public abstract class MainWeapon : MonoBehaviour
 {
     [Header("Properties")]
     [SerializeField] private string weaponName = "New Weapon Name";
-    [SerializeField] [Min(1)] private int power = 1;
     [SerializeField] [Min(1)] private int initialAmmo = 100;
+    [SerializeField] private Sprite itemSprite;
 
     public event EventHandler AmmoExpended;
     protected Quaternion shotRotation;
 
     public string WeaponName => weaponName;
-    public int Power => power;
     public int InitialAmmo => initialAmmo;
+    public Sprite ItemSprite => itemSprite;
 
     protected void OnAmmoExpended() => AmmoExpended?.Invoke(this, EventArgs.Empty);
     public virtual void UpdateShotDirection(Vector2 newDirection) => shotRotation = Quaternion.FromToRotation(Vector3.right, newDirection);

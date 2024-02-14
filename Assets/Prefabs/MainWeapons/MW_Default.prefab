@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponName: Default
-  power: 1
   initialAmmo: 100
+  itemSprite: {fileID: 21300000, guid: 1b989ad77e4268d47ba66046eba25c1b, type: 3}
   fireRate: 0.3
   shotSpeed: 25
   shotDistance: 30
