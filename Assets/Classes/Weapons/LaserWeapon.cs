@@ -24,7 +24,7 @@ public class LaserWeapon : MainWeapon
 
     public override void UpdateShotDirection(Vector2 newDirection)
     {
-        if (Vector2.Equals(newDirection, directionCache)) return;
+        if (Vector2.Equals(newDirection, directionCache)) { return; }
 
         shotRotation = Quaternion.LookRotation(Vector3.forward, newDirection) * Quaternion.Euler(0, 0, 90);
         directionCache = newDirection;
@@ -57,7 +57,7 @@ public class LaserWeapon : MainWeapon
 
     public override void StopFire()
     {
-        if (!firing || cancelCoroutine != null) return;
+        if (!firing || cancelCoroutine != null) { return; }
         cancelCoroutine = StartCoroutine(CancelCountdown());
     }
 
