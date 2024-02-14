@@ -30,16 +30,7 @@ public class BurstWeapon : MainWeapon
         if (shotPool != null) return;
         shotPool = new ObjectPool<Proyectile>(ShotInstance, OnTakeShotFromPool, OnReturnShotToPool, 
             OnDestroyShotInstance, true, shotPoolDefaultSize, shotPoolMaxSize);
-    }
-
-    public override void Deactivate()
-    {
-        StopFire();
-        HaltCRoutines();
-        if (shotPool != null) { shotPool.Clear(); }
-        OnWeaponDisabled();
-        gameObject.SetActive(false);
-    }
+    }    
 
     public override void Fire()
     {
@@ -50,6 +41,26 @@ public class BurstWeapon : MainWeapon
     }
 
     public override void StopFire() => shootRequested = false;
+
+    public override void Deactivate()
+    {
+        StopFire();
+        HaltCRoutines();
+        if (shotPool != null) { shotPool.Clear(); }
+        OnWeaponDisabled();
+        gameObject.SetActive(false);
+    }
+
+    public override void Discard()
+    {
+        StopFire();
+        HaltCRoutines();
+        shotPool.Clear();
+        OnWeaponDisabled();
+        Destroy(gameObject);
+    }
+
+    protected virtual void OnWeaponDisabled() => WeaponDisabled.Invoke(this, EventArgs.Empty);
 
     private IEnumerator BurstShot()
     {
@@ -70,14 +81,7 @@ public class BurstWeapon : MainWeapon
     {
         yield return new WaitForSeconds(fireRate);
         coolDownCoroutine = null;
-    }
-
-    private void DeployShot()
-    {
-        if (shotPool == null) return;
-        shotPool.Get();
-        OnAmmoExpended();        
-    }
+    }    
 
     private void HaltCRoutines()
     {
@@ -94,16 +98,12 @@ public class BurstWeapon : MainWeapon
         }
     }
 
-    public override void Discard()
+    private void DeployShot()
     {
-        StopFire();
-        HaltCRoutines();
-        shotPool.Clear();
-        OnWeaponDisabled();
-        Destroy(gameObject);
+        if (shotPool == null) return;
+        shotPool.Get();
+        OnAmmoExpended();
     }
-
-    protected virtual void OnWeaponDisabled() => WeaponDisabled.Invoke(this, EventArgs.Empty);
 
     #region Shot Pooling
     Proyectile ShotInstance()

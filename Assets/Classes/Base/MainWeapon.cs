@@ -19,9 +19,9 @@ public abstract class MainWeapon : MonoBehaviour
 
     protected void OnAmmoExpended() => AmmoExpended?.Invoke(this, EventArgs.Empty);
     public virtual void UpdateShotDirection(Vector2 newDirection) => shotRotation = Quaternion.FromToRotation(Vector3.right, newDirection);
-    public virtual void Deactivate() => gameObject.SetActive(false);
     public abstract void Initialize();
-    public abstract void Discard();
     public abstract void Fire();
     public abstract void StopFire();
+    public abstract void Deactivate();
+    public abstract void Discard();
 }

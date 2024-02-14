@@ -16,6 +16,26 @@ public class LaserWeapon : MainWeapon
     private Coroutine rotateCoroutine;
     private Coroutine cancelCoroutine;
 
+    public override void Initialize()
+    {
+        gameObject.SetActive(true);
+        laser.InitializeParameters();
+    }
+
+    public override void UpdateShotDirection(Vector2 newDirection)
+    {
+        if (Vector2.Equals(newDirection, directionCache)) return;
+
+        shotRotation = Quaternion.LookRotation(Vector3.forward, newDirection) * Quaternion.Euler(0, 0, 90);
+        directionCache = newDirection;
+
+        if (firing)
+        {
+            if (rotateCoroutine != null) StopCoroutine(rotateCoroutine);
+            rotateCoroutine = StartCoroutine(RotateLaser());
+        }
+    }
+
     public override void Fire()
     {
         if (firing)
@@ -41,41 +61,28 @@ public class LaserWeapon : MainWeapon
         cancelCoroutine = StartCoroutine(CancelCountdown());
     }
 
-    public override void UpdateShotDirection(Vector2 newDirection)
-    {
-        if (Vector2.Equals(newDirection, directionCache)) return;
-
-        shotRotation = Quaternion.LookRotation(Vector3.forward, newDirection) * Quaternion.Euler(0, 0, 90);
-        directionCache = newDirection;
-
-        if (firing)
-        {
-            if (rotateCoroutine != null) StopCoroutine(rotateCoroutine);
-            rotateCoroutine = StartCoroutine(RotateLaser());
-        }
-    }
-
-    public override void Initialize()
-    {
-        laser.InitializeParameters();
-    }   
-
-    public override void Discard()
-    {
-        TurnLaserOff();
-        Destroy(gameObject);
-    }
-
     private void TurnLaserOff()
     {
         HaltCoroutines();
         laser.Deactivate();
         firing = false;
-    }    
+    }
+
+    public override void Deactivate()
+    {
+        TurnLaserOff();
+        gameObject.SetActive(false);
+    }
+
+    public override void Discard()
+    {
+        TurnLaserOff();
+        Destroy(gameObject);
+    }            
 
     private IEnumerator ExpendEnergy()
     {
-        while (firing) //laserinstance.IsActive
+        while (firing)
         {
             yield return new WaitForSeconds(ammoExpendRate);
             OnAmmoExpended();
