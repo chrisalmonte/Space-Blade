@@ -55,7 +55,7 @@ public class BurstWeapon : MainWeapon
     {
         StopFire();
         HaltCRoutines();
-        shotPool.Clear();
+        if (shotPool != null) { shotPool.Clear(); }
         OnWeaponDisabled();
         Destroy(gameObject);
     }

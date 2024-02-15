@@ -16,7 +16,7 @@ public class Laser : MonoBehaviour
     private void Update()
     {
         lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, transform.position + (transform.right * 90));
+        lineRenderer.SetPosition(1, transform.position + (transform.right * maxLength));
     }
 
     public void InitializeParameters()
