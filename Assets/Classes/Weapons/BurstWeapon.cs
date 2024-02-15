@@ -60,7 +60,7 @@ public class BurstWeapon : MainWeapon
         Destroy(gameObject);
     }
 
-    protected virtual void OnWeaponDisabled() => WeaponDisabled.Invoke(this, EventArgs.Empty);
+    private void OnWeaponDisabled() => WeaponDisabled?.Invoke(this, EventArgs.Empty);
 
     private IEnumerator BurstShot()
     {

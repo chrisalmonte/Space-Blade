@@ -27,7 +27,7 @@ public class ChargedProyectile : MonoBehaviour
     private IObjectPool<ChargedProyectile> shotPool;
 
     public EventHandler ChargeWasShot;
-    private void OnChargeWasShot() => ChargeWasShot.Invoke(this, EventArgs.Empty);
+    private void OnChargeWasShot() => ChargeWasShot?.Invoke(this, EventArgs.Empty);
 
     public float ChargeValue() => charge;
 

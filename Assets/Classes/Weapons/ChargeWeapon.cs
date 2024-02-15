@@ -75,7 +75,7 @@ public class ChargeWeapon : MainWeapon
         PrepareChargeShot();
     }
 
-    protected virtual void OnWeaponDisabled() => WeaponDisabled.Invoke(this, EventArgs.Empty);
+    private void OnWeaponDisabled() => WeaponDisabled?.Invoke(this, EventArgs.Empty);
 
     private IEnumerator WeaponCooldown()
     {
@@ -94,7 +94,6 @@ public class ChargeWeapon : MainWeapon
 
     private void PrepareChargeShot()
     {
-        Debug.Log("creating new charge");
         if (shotPool == null) return;
         shotPool.Get();
     }
