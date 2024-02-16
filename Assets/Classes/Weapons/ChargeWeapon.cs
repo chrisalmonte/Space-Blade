@@ -7,22 +7,38 @@ public class ChargeWeapon : MainWeapon
 {
     [Header("Weapon Properties")]
     [SerializeField] private float coolDownTime = 0.3f;
+    [SerializeField] private float turnSpeed = 6.5f;
+    [SerializeField] [Range(1, 4)] private int turnSmoothLvl = 1;
     [SerializeField] private ChargedProyectile ammoPrefab = null;
 
     [Header("Internal Properties")]
     [SerializeField] [Min(5)] private int shotPoolDefaultSize = 5;
     [SerializeField] [Min(10)] private int shotPoolMaxSize = 10;
 
+    private Vector2 directionCache;
     private ChargedProyectile currentCharge;    
     private Coroutine coolDownCoroutine;
+    private Coroutine rotateCoroutine;
     private IObjectPool<ChargedProyectile> shotPool;
 
     public event EventHandler WeaponDisabled;
 
     public override void UpdateShotDirection(Vector2 newDirection)
-    {
-        base.UpdateShotDirection(newDirection);
-        currentCharge.transform.rotation = shotRotation;
+    {  
+        if (Vector2.Equals(newDirection, directionCache)) { return; }
+
+        shotRotation = Quaternion.LookRotation(Vector3.forward, newDirection) * Quaternion.Euler(0, 0, 90);
+        directionCache = newDirection;
+
+        if (currentCharge != null) 
+        {
+            if (currentCharge.ChargeValue() == 0) { currentCharge.transform.rotation = shotRotation; }
+            else
+            {
+                if (rotateCoroutine != null) StopCoroutine(rotateCoroutine);
+                rotateCoroutine = StartCoroutine(RotateCharge());
+            }            
+        }
     }
 
     public override void Initialize()
@@ -68,6 +84,12 @@ public class ChargeWeapon : MainWeapon
 
     private void OnShotDeployed(object sender, System.EventArgs e)
     {
+        if(rotateCoroutine != null)
+        {
+            StopCoroutine(rotateCoroutine);
+            rotateCoroutine = null;
+        }
+
         currentCharge.ChargeWasShot -= OnShotDeployed;
         currentCharge.transform.parent = null;
         currentCharge = null;
@@ -83,12 +105,32 @@ public class ChargeWeapon : MainWeapon
         coolDownCoroutine = null;
     }
 
+    private IEnumerator RotateCharge()
+    {
+        float t = 0;
+        Quaternion fromRot = currentCharge.transform.rotation;
+
+        while (t < 1)
+        {
+            t += turnSpeed * Time.deltaTime;
+            currentCharge.transform.rotation = Quaternion.Lerp(fromRot, shotRotation, Mathf.Pow(t, turnSmoothLvl));
+
+            yield return null;
+        }
+    }
+
     private void HaltCoroutines()
     {
         if (coolDownCoroutine != null)
         {
             StopCoroutine(coolDownCoroutine);
             coolDownCoroutine = null;
+        }
+
+        if (rotateCoroutine != null)
+        {
+            StopCoroutine(rotateCoroutine);
+            rotateCoroutine = null;
         }
     }
 
