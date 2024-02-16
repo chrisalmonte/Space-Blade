@@ -25,6 +25,15 @@ public class ChargeWeapon : MainWeapon
 
     public event EventHandler WeaponDisabled;
 
+    public override void Initialize()
+    {
+        gameObject.SetActive(true);
+
+        if (shotPool != null) return;
+        shotPool = new ObjectPool<ChargedProyectile>(ShotInstance, OnTakeShotFromPool, OnReturnShotToPool,
+            OnDestroyShotInstance, true, shotPoolDefaultSize, shotPoolMaxSize);
+    }
+
     public override void UpdateShotDirection(Vector2 newDirection)
     {  
         if (Vector2.Equals(newDirection, directionCache)) { return; }
@@ -41,17 +50,6 @@ public class ChargeWeapon : MainWeapon
                 rotateCoroutine = StartCoroutine(RotateCharge());
             }            
         }
-    }
-
-    public override void Initialize()
-    {
-        gameObject.SetActive(true);
-
-        if (shotPool != null) return;
-        shotPool = new ObjectPool<ChargedProyectile>(ShotInstance, OnTakeShotFromPool, OnReturnShotToPool,
-            OnDestroyShotInstance, true, shotPoolDefaultSize, shotPoolMaxSize);
-
-        PrepareChargeShot();
     }    
 
     public override void Fire()
