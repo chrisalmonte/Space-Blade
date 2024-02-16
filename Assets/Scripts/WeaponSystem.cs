@@ -31,11 +31,12 @@ public class WeaponSystem : MonoBehaviour
     {
         shoot.performed += SetAttackDirection;
         shoot.canceled += SetAttackDirection;
+        currentWeapon.Initialize();
     }
 
     private void OnDisable()
     {
-        CancelShoot();
+        currentWeapon.Deactivate();
         shoot.performed -= SetAttackDirection;
         shoot.canceled -= SetAttackDirection;
     }

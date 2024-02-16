@@ -148,6 +148,7 @@ public class ChargedProyectile : MonoBehaviour
 
     public void Deactivate()
     {
+        HaltCoroutines();
         gameObject.SetActive(false);
 
         if (destroyAfterUse || shotPool == null) { Destroy(gameObject); }

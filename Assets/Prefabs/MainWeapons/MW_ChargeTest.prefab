@@ -49,6 +49,7 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: 8695e88ab581a514c8a5770ea87f009c, type: 3}
   coolDownTime: 0.3
   turnSpeed: 7.5
+  activeAfterCancel: 0.1
   turnSmoothLvl: 2
   ammoPrefab: {fileID: 1280315121906756742, guid: 3342f65ecb973fc439bc548f15ef49e8, type: 3}
   shotPoolDefaultSize: 5

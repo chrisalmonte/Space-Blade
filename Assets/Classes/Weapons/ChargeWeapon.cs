@@ -8,7 +8,8 @@ public class ChargeWeapon : MainWeapon
     [Header("Weapon Properties")]
     [SerializeField] private float coolDownTime = 0.3f;
     [SerializeField] private float turnSpeed = 6.5f;
-    [SerializeField] [Range(1, 4)] private int turnSmoothLvl = 1;
+    [SerializeField] [Range(0, 1)] private float activeAfterCancel = 0.1f;
+    [SerializeField] [Range(1, 4)] private int turnSmoothLvl = 2;
     [SerializeField] private ChargedProyectile ammoPrefab = null;
 
     [Header("Internal Properties")]
@@ -19,6 +20,7 @@ public class ChargeWeapon : MainWeapon
     private ChargedProyectile currentCharge;    
     private Coroutine coolDownCoroutine;
     private Coroutine rotateCoroutine;
+    private Coroutine cancelCoroutine;
     private IObjectPool<ChargedProyectile> shotPool;
 
     public event EventHandler WeaponDisabled;
@@ -54,30 +56,39 @@ public class ChargeWeapon : MainWeapon
 
     public override void Fire()
     {
-        if(currentCharge == null) { return; }
-        currentCharge.StartCharge();
+        if(currentCharge == null) { PrepareChargeShot(); }
+
+        if(cancelCoroutine != null)
+        { 
+            StopCoroutine(cancelCoroutine);
+            cancelCoroutine = null;
+        }
+        else
+        {
+            currentCharge.StartCharge();
+        }        
     }
 
     public override void StopFire()
     {
-        if (currentCharge == null) { return; }
-        currentCharge.ReleaseCharge();
+        if (currentCharge == null || cancelCoroutine != null || !gameObject.activeSelf) { return; }
+        cancelCoroutine = StartCoroutine(CancelCountdown());
     }
 
     public override void Deactivate()
     {
-        StopFire();
+        currentCharge?.ReleaseCharge();
         HaltCoroutines();
-        if (shotPool != null) { shotPool.Clear(); }
+        shotPool?.Clear();
         OnWeaponDisabled();
         gameObject.SetActive(false);
     }
 
     public override void Discard()
     {
-        StopFire();
+        currentCharge?.ReleaseCharge();
         HaltCoroutines();
-        if (shotPool != null) { shotPool.Clear(); }
+        shotPool?.Clear();
         OnWeaponDisabled();
         Destroy(gameObject);
     }
@@ -94,7 +105,6 @@ public class ChargeWeapon : MainWeapon
         currentCharge.transform.parent = null;
         currentCharge = null;
         OnAmmoExpended();
-        PrepareChargeShot();
     }
 
     private void OnWeaponDisabled() => WeaponDisabled?.Invoke(this, EventArgs.Empty);
@@ -119,19 +129,19 @@ public class ChargeWeapon : MainWeapon
         }
     }
 
+    private IEnumerator CancelCountdown()
+    {
+        yield return new WaitForSeconds(activeAfterCancel);
+        currentCharge.ReleaseCharge();
+        cancelCoroutine = null;
+    }
+
     private void HaltCoroutines()
     {
-        if (coolDownCoroutine != null)
-        {
-            StopCoroutine(coolDownCoroutine);
-            coolDownCoroutine = null;
-        }
-
-        if (rotateCoroutine != null)
-        {
-            StopCoroutine(rotateCoroutine);
-            rotateCoroutine = null;
-        }
+        StopAllCoroutines();
+        coolDownCoroutine = null;
+        rotateCoroutine = null;
+        cancelCoroutine = null;
     }
 
     private void PrepareChargeShot()
