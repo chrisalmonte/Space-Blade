@@ -20,7 +20,6 @@ public class ChargedProyectile : MonoBehaviour
     private float charge;
     private bool canBeShot;
     private bool shot;
-    private bool destroyAfterUse;
     private Coroutine chargeCoroutine;
     private Coroutine dischargeCoroutine;
     private Vector2 startPosition;
@@ -105,7 +104,7 @@ public class ChargedProyectile : MonoBehaviour
         if (Vector2.Distance(transform.position, startPosition) > maxDistance) { Deactivate(); }
     }
 
-    public void OnWeaponDisabled(object sender, System.EventArgs e) => destroyAfterUse = true;
+    public void OnWeaponDisabled(object sender, System.EventArgs e) => shotPool = null;
 
     private IEnumerator Charge()
     {
@@ -151,7 +150,7 @@ public class ChargedProyectile : MonoBehaviour
         HaltCoroutines();
         gameObject.SetActive(false);
 
-        if (destroyAfterUse || shotPool == null) { Destroy(gameObject); }
+        if (shotPool == null) { Destroy(gameObject); }
         else { shotPool.Release(this); }
     }
 }

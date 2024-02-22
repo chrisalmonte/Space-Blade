@@ -7,7 +7,6 @@ public class Proyectile : MonoBehaviour
 {
     private float speed;
     private float maxDistance;
-    private bool destroyAfterUse;
     private Vector2 startPosition;
     private IObjectPool<Proyectile> shotPool;
 
@@ -26,7 +25,7 @@ public class Proyectile : MonoBehaviour
     public void Deactivate() {
         gameObject.SetActive(false);
 
-        if (destroyAfterUse || shotPool == null) { Destroy(gameObject); }
+        if (shotPool == null) { Destroy(gameObject); }
         else shotPool.Release(this);
     }
 
@@ -36,5 +35,5 @@ public class Proyectile : MonoBehaviour
         if (Vector2.Distance(transform.position, startPosition) > maxDistance) Deactivate();
     }
 
-    public void OnWeaponDisabled(object sender, System.EventArgs e) => destroyAfterUse = true;
+    public void OnWeaponDisabled(object sender, System.EventArgs e) => shotPool = null;
 }
