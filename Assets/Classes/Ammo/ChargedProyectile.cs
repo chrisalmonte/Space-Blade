@@ -6,6 +6,10 @@ using UnityEngine.Pool;
 
 public class ChargedProyectile : MonoBehaviour
 {
+    //Transfer charge behavior to weapon. Proyectile should mostly just consist of SetChargeLevel() and other properties
+    //Also, make it so that "firing" is true when charge is decreasing gradually but player is not pressing fire.
+
+
     [SerializeField] [Min(0)] private float startPower = 5;
     [SerializeField] [Min(1)] private float endPower = 100;
     [SerializeField] [Min(0)] private float startSpeed = 15;
@@ -101,7 +105,7 @@ public class ChargedProyectile : MonoBehaviour
     protected virtual void Move()
     {
         transform.Translate(Vector3.right * speed * Time.deltaTime);
-        if (Vector2.Distance(transform.position, startPosition) > maxDistance) { Deactivate(); }
+        if (Vector2.Distance(transform.position, startPosition) > maxDistance) { Explode(); }
     }
 
     public void OnWeaponDisabled(object sender, System.EventArgs e) => shotPool = null;
@@ -145,7 +149,7 @@ public class ChargedProyectile : MonoBehaviour
         }
     }
 
-    public void Deactivate()
+    public void Explode()
     {
         HaltCoroutines();
         gameObject.SetActive(false);

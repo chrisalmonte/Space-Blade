@@ -49,10 +49,8 @@ MonoBehaviour:
   initialAmmo: 100
   rotateGradually: 0
   rotationSpeed: 0
-  turnSmoothLvl: 1
+  rotationSmoothLvl: 1
   fireRate: 0.09
-  shotSpeed: 30
-  shotDistance: 30
   ammoPrefab: {fileID: 451882636998692569, guid: bd9f06ad511f5284a99d21f24ade67a5, type: 3}
   shotPoolDefaultSize: 50
   shotPoolMaxSize: 400

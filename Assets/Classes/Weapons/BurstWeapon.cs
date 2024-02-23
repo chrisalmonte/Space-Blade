@@ -6,10 +6,8 @@ using UnityEngine.Pool;
 
 public class BurstWeapon : MainWeapon
 {
-    [Header("Shot Properties")]
+    [Header("Firing Properties")]
     [SerializeField] private float fireRate = 0.3f;
-    [SerializeField] private float shotSpeed = 12f;
-    [SerializeField] private float shotDistance = 50f;
     [SerializeField] private Proyectile ammoPrefab = null;
 
     [Header("Shot Pool Properties")]
@@ -108,7 +106,7 @@ public class BurstWeapon : MainWeapon
     Proyectile ShotInstance()
     {
         Proyectile shot = GameObject.Instantiate(ammoPrefab, transform.position, Quaternion.identity);
-        shot.Initialize(shotPool, shotSpeed, shotDistance);
+        shot.Initialize(shotPool);
         shot.gameObject.SetActive(false);        
         return shot;
     }
@@ -116,14 +114,14 @@ public class BurstWeapon : MainWeapon
     void OnReturnShotToPool(Proyectile shot)
     {
         shot.transform.position = Vector2.zero;
-        WeaponDisabled -= shot.OnWeaponDisabled;
+        WeaponDisabled -= shot.OnWeaponDestroyed;
     }
 
     void OnTakeShotFromPool(Proyectile shot)
     {
         shot.transform.SetPositionAndRotation(transform.position, shotRotation);
         shot.gameObject.SetActive(true);
-        WeaponDisabled += shot.OnWeaponDisabled;
+        WeaponDisabled += shot.OnWeaponDestroyed;
         OnAmmoExpended();
     }
 
