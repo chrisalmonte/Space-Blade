@@ -45,13 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ac6d6541da34df43a44e4a85851208f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: New Weapon Name
-  initialAmmo: 100
   itemSprite: {fileID: 21300000, guid: 8b0129476a8bb5d449dd6f97843dea1d, type: 3}
+  weaponName: Test Laser
+  initialAmmo: 100
+  rotateGradually: 1
+  rotationSpeed: 2.1
+  rotationSmoothLvl: 2
   ammoExpendRate: 0.05
   activeAfterCancel: 0.15
-  turnSpeed: 2.1
-  turnSmoothLvl: 2
   laser: {fileID: 8405236669527956482}
 --- !u!1001 &3363701802545563469
 PrefabInstance:

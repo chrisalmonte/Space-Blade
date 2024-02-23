@@ -7,23 +7,24 @@ public class ChargeWeapon : MainWeapon
 {
     [Header("Weapon Properties")]
     [SerializeField] private float coolDownTime = 0.3f;
-    [SerializeField] private float turnSpeed = 6.5f;
     [SerializeField] [Range(0, 1)] private float activeAfterCancel = 0.1f;
-    [SerializeField] [Range(1, 4)] private int turnSmoothLvl = 2;
     [SerializeField] private ChargedProyectile ammoPrefab = null;
 
-    [Header("Internal Properties")]
+    [Header("Shot Pool Properties")]
     [SerializeField] [Min(5)] private int shotPoolDefaultSize = 5;
     [SerializeField] [Min(10)] private int shotPoolMaxSize = 10;
 
-    private Vector2 directionCache;
     private ChargedProyectile currentCharge;    
     private Coroutine coolDownCoroutine;
-    private Coroutine rotateCoroutine;
     private Coroutine cancelCoroutine;
     private IObjectPool<ChargedProyectile> shotPool;
 
     public event EventHandler WeaponDisabled;
+
+    private void Update()
+    {
+        if (currentCharge != null) { currentCharge.transform.rotation = shotRotation; }
+    }
 
     public override void Initialize()
     {
@@ -33,24 +34,6 @@ public class ChargeWeapon : MainWeapon
         shotPool = new ObjectPool<ChargedProyectile>(ShotInstance, OnTakeShotFromPool, OnReturnShotToPool,
             OnDestroyShotInstance, true, shotPoolDefaultSize, shotPoolMaxSize);
     }
-
-    public override void UpdateShotDirection(Vector2 newDirection)
-    {  
-        if (Vector2.Equals(newDirection, directionCache)) { return; }
-
-        shotRotation = Quaternion.LookRotation(Vector3.forward, newDirection) * Quaternion.Euler(0, 0, 90);
-        directionCache = newDirection;
-
-        if (currentCharge != null) 
-        {
-            if (currentCharge.ChargeValue() == 0) { currentCharge.transform.rotation = shotRotation; }
-            else
-            {
-                if (rotateCoroutine != null) StopCoroutine(rotateCoroutine);
-                rotateCoroutine = StartCoroutine(RotateCharge());
-            }            
-        }
-    }    
 
     public override void Fire()
     {
@@ -63,7 +46,15 @@ public class ChargeWeapon : MainWeapon
         }
         else
         {
+            if (currentCharge.ChargeValue() == 0 && rotationCoroutine != null) 
+            {
+                StopCoroutine(rotationCoroutine);
+                rotationCoroutine = null;
+                shotRotation = targetRotation;
+            }
+
             currentCharge.StartCharge();
+            shooting = true;
         }        
     }
 
@@ -93,10 +84,10 @@ public class ChargeWeapon : MainWeapon
 
     private void OnShotDeployed(object sender, System.EventArgs e)
     {
-        if(rotateCoroutine != null)
+        if(rotationCoroutine != null)
         {
-            StopCoroutine(rotateCoroutine);
-            rotateCoroutine = null;
+            StopCoroutine(rotationCoroutine);
+            rotationCoroutine = null;
         }
 
         currentCharge.ChargeWasShot -= OnShotDeployed;
@@ -113,33 +104,29 @@ public class ChargeWeapon : MainWeapon
         coolDownCoroutine = null;
     }
 
-    private IEnumerator RotateCharge()
-    {
-        float t = 0;
-        Quaternion fromRot = currentCharge.transform.rotation;
-
-        while (t < 1)
-        {
-            t += turnSpeed * Time.deltaTime;
-            currentCharge.transform.rotation = Quaternion.Lerp(fromRot, shotRotation, Mathf.Pow(t, turnSmoothLvl));
-
-            yield return null;
-        }
-    }
-
     private IEnumerator CancelCountdown()
     {
         yield return new WaitForSeconds(activeAfterCancel);
         currentCharge.ReleaseCharge();
+        shooting = false;
         cancelCoroutine = null;
     }
 
-    private void HaltCoroutines()
+    protected override void HaltCoroutines()
     {
-        StopAllCoroutines();
-        coolDownCoroutine = null;
-        rotateCoroutine = null;
-        cancelCoroutine = null;
+        base.HaltCoroutines();
+
+        if (coolDownCoroutine != null)
+        {
+            StopCoroutine(coolDownCoroutine);
+            coolDownCoroutine = null;
+        }
+
+        if (cancelCoroutine != null)
+        {
+            StopCoroutine(cancelCoroutine);
+            cancelCoroutine = null;
+        }
     }
 
     private void PrepareChargeShot()

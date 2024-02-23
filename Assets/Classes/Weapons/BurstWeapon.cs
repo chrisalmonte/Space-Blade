@@ -6,17 +6,16 @@ using UnityEngine.Pool;
 
 public class BurstWeapon : MainWeapon
 {
-    [Header("Weapon Properties")]
+    [Header("Shot Properties")]
     [SerializeField] private float fireRate = 0.3f;
     [SerializeField] private float shotSpeed = 12f;
     [SerializeField] private float shotDistance = 50f;
     [SerializeField] private Proyectile ammoPrefab = null;
 
-    [Header("Internal Properties")]
+    [Header("Shot Pool Properties")]
     [SerializeField] [Min(10)] private int shotPoolDefaultSize = 50;
     [SerializeField] [Min(200)] private int shotPoolMaxSize = 400;
 
-    private bool shootRequested;
     private Coroutine shootCoroutine;
     private Coroutine coolDownCoroutine;
     private IObjectPool<Proyectile> shotPool;
@@ -36,11 +35,11 @@ public class BurstWeapon : MainWeapon
     {
         if (shootCoroutine != null) { return; }
 
-        shootRequested = true;
+        shooting = true;
         shootCoroutine = StartCoroutine(BurstShot());
     }
 
-    public override void StopFire() => shootRequested = false;
+    public override void StopFire() => shooting = false;
 
     public override void Deactivate()
     {
@@ -64,7 +63,7 @@ public class BurstWeapon : MainWeapon
 
     private IEnumerator BurstShot()
     {
-        while (shootRequested)
+        while (shooting)
         {
             if (coolDownCoroutine == null)
             {
@@ -122,8 +121,7 @@ public class BurstWeapon : MainWeapon
 
     void OnTakeShotFromPool(Proyectile shot)
     {
-        shot.transform.rotation = shotRotation;
-        shot.transform.position = transform.position;
+        shot.transform.SetPositionAndRotation(transform.position, shotRotation);
         shot.gameObject.SetActive(true);
         WeaponDisabled += shot.OnWeaponDisabled;
         OnAmmoExpended();

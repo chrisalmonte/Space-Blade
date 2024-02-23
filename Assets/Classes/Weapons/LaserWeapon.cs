@@ -6,15 +6,15 @@ public class LaserWeapon : MainWeapon
 {
     [SerializeField] private float ammoExpendRate = 0.05f;
     [SerializeField] private float activeAfterCancel = 0.4f;
-    [SerializeField] private float turnSpeed = 2.1f;
-    [SerializeField] [Range(1, 4)] private int turnSmoothLvl = 3;
     [SerializeField] private Laser laser = null;
 
-    private bool firing = false;
-    private Vector2 directionCache;
     private Coroutine ammoExpendCoroutine;
-    private Coroutine rotateCoroutine;
     private Coroutine cancelCoroutine;
+
+    private void Update()
+    {
+        if (laser != null) { laser.transform.rotation = shotRotation; }
+    }
 
     public override void Initialize()
     {
@@ -22,23 +22,9 @@ public class LaserWeapon : MainWeapon
         laser.InitializeParameters();
     }
 
-    public override void UpdateShotDirection(Vector2 newDirection)
-    {
-        if (Vector2.Equals(newDirection, directionCache)) { return; }
-
-        shotRotation = Quaternion.LookRotation(Vector3.forward, newDirection) * Quaternion.Euler(0, 0, 90);
-        directionCache = newDirection;
-
-        if (firing)
-        {
-            if (rotateCoroutine != null) StopCoroutine(rotateCoroutine);
-            rotateCoroutine = StartCoroutine(RotateLaser());
-        }
-    }
-
     public override void Fire()
     {
-        if (firing)
+        if (shooting)
         {
             if (cancelCoroutine != null)
             {
@@ -51,13 +37,13 @@ public class LaserWeapon : MainWeapon
         
         laser.transform.rotation = shotRotation;
         laser.Activate();        
-        firing = true;
+        shooting = true;
         ammoExpendCoroutine = StartCoroutine(ExpendEnergy());
     }
 
     public override void StopFire()
     {
-        if (!firing || cancelCoroutine != null) { return; }
+        if (!shooting || cancelCoroutine != null) { return; }
         cancelCoroutine = StartCoroutine(CancelCountdown());
     }
 
@@ -65,7 +51,7 @@ public class LaserWeapon : MainWeapon
     {
         HaltCoroutines();
         laser.Deactivate();
-        firing = false;
+        shooting = false;
     }
 
     public override void Deactivate()
@@ -82,27 +68,13 @@ public class LaserWeapon : MainWeapon
 
     private IEnumerator ExpendEnergy()
     {
-        while (firing)
+        while (shooting)
         {
             yield return new WaitForSeconds(ammoExpendRate);
             OnAmmoExpended();
         }
 
         ammoExpendCoroutine = null;
-    }
-
-    private IEnumerator RotateLaser()
-    {
-        float t = 0;
-        Quaternion fromRot = laser.transform.rotation;
-
-        while (firing && t < 1)
-        {
-            t += turnSpeed * Time.deltaTime;
-            laser.transform.rotation = Quaternion.Lerp(fromRot, shotRotation, Mathf.Pow(t, turnSmoothLvl));
-            
-            yield return null;
-        }
     }
 
     private IEnumerator CancelCountdown()
@@ -112,18 +84,14 @@ public class LaserWeapon : MainWeapon
         cancelCoroutine = null;
     }
 
-    private void HaltCoroutines()
+    protected override void HaltCoroutines()
     {
+        base.HaltCoroutines();
+
         if (ammoExpendCoroutine != null)
         {
             StopCoroutine(ammoExpendCoroutine);
             ammoExpendCoroutine = null;
-        }
-
-        if (rotateCoroutine != null)
-        {
-            StopCoroutine(rotateCoroutine);
-            rotateCoroutine = null;
         }
 
         if (cancelCoroutine != null)

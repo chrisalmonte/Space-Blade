@@ -44,9 +44,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05eb147dd4cd511489d1b63886d827c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: 1b989ad77e4268d47ba66046eba25c1b, type: 3}
   weaponName: Default
   initialAmmo: 100
-  itemSprite: {fileID: 21300000, guid: 1b989ad77e4268d47ba66046eba25c1b, type: 3}
+  rotateGradually: 0
+  rotationSpeed: 0
+  rotationSmoothLvl: 1
   fireRate: 0.3
   shotSpeed: 25
   shotDistance: 30
