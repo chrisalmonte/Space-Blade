@@ -148,6 +148,6 @@ MonoBehaviour:
   startSpeed: 3
   endSpeed: 50
   chargeTime: 2
-  chargelostGradually: 0
-  minChargeValue: 0.3
+  chargelostGradually: 1
+  minChargeValue: 0.6
   maxDistance: 30

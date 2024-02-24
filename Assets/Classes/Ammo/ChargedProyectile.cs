@@ -6,12 +6,9 @@ using UnityEngine.Pool;
 
 public class ChargedProyectile : MonoBehaviour
 {
-    //Transfer charge behavior to weapon. Proyectile should mostly just consist of SetChargeLevel() and other properties
-    //Also, make it so that "firing" is true when charge is decreasing gradually but player is not pressing fire.
-
-
-    [SerializeField] [Min(0)] private float startPower = 5;
-    [SerializeField] [Min(1)] private float endPower = 100;
+    [Header("Charge Properties")]
+    [SerializeField] [Min(0)] private float startPower = 1;
+    [SerializeField] [Min(1)] private float endPower = 5;
     [SerializeField] [Min(0)] private float startSpeed = 15;
     [SerializeField] [Min(0)] private float endSpeed = 25;
     [SerializeField] private float chargeTime = 2;
@@ -21,140 +18,88 @@ public class ChargedProyectile : MonoBehaviour
 
     private float power;
     private float speed;
-    private float charge;
-    private bool canBeShot;
+    private float chargeValue;
     private bool shot;
-    private Coroutine chargeCoroutine;
-    private Coroutine dischargeCoroutine;
     private Vector2 startPosition;
     private IObjectPool<ChargedProyectile> shotPool;
 
-    public EventHandler ChargeWasShot;
-    private void OnChargeWasShot() => ChargeWasShot?.Invoke(this, EventArgs.Empty);
+    public EventHandler DestroyedWhileHeld;
+    private void OnHitWhileHeld() => DestroyedWhileHeld?.Invoke(this, EventArgs.Empty);
 
-    public float ChargeValue() => charge;
+    public float ChargeValue() => chargeValue;
+    public float ChargeTime() => chargeTime;
+    public float MinCharge() => minChargeValue;
+    public bool ChargeLostGradually() => chargelostGradually;
 
     private void Update()
     {
-        if (shot) { Move(); }
+        if (shot)
+        { 
+            Move();
+            CheckDistanceLimit();
+        }
     }
+
+    public void OnWeaponDisabled(object sender, System.EventArgs e) => shotPool = null;
 
     public void Initialize(IObjectPool<ChargedProyectile> newShotPool)
     {
         shotPool = newShotPool;
         ResetChargeValues();
+    }
+
+    public void AddCharge(float value)
+    {
+        chargeValue = Mathf.Clamp01(chargeValue + value);
+        UpdateChargeValues();
+    }
+
+    public void Deploy()
+    {
+        shot = true;
+        startPosition = transform.position;
+    }
+
+    public void DisipateCharge()
+    {
+        ResetChargeValues();
     }    
 
-    public void StartCharge()
+    protected virtual void UpdateChargeValues()
     {
-        if (chargeCoroutine != null) { return; }
-        
-        if (dischargeCoroutine != null)
-        {
-            StopCoroutine(dischargeCoroutine);
-            dischargeCoroutine = null;
-        }
-
-        chargeCoroutine = StartCoroutine(Charge());
-    }
-
-    public void ReleaseCharge()
-    {
-        if (chargeCoroutine != null) 
-        {
-            StopCoroutine(chargeCoroutine);
-            chargeCoroutine = null;
-        }        
-
-        if (canBeShot) { ShootCharge(); }
-        else
-        {
-            if (chargelostGradually) { dischargeCoroutine = StartCoroutine(Discharge()); }
-            else ResetChargeValues();
-        }
-    }
-
-    public void HaltCharge()
-    {
-        HaltCoroutines();    
-        ResetChargeValues();
-    }
-
-    private void ShootCharge()
-    {
-        OnChargeWasShot();
-        shot = true;
-    }
-
-    public void ResetChargeValues()
-    {
-        charge = 0;
-        power = startPower;
-        speed = startSpeed;
-        canBeShot = (charge >= minChargeValue);
-        shot = false;
-    }
-
-    private void UpdateChargeValues()
-    {
-        power = Mathf.Lerp(startPower, endPower, charge);
-        speed = Mathf.Lerp(startSpeed, endSpeed, charge);
-        canBeShot = (charge >= minChargeValue);
+        power = Mathf.Lerp(startPower, endPower, chargeValue);
+        speed = Mathf.Lerp(startSpeed, endSpeed, chargeValue);
     }
 
     protected virtual void Move()
     {
         transform.Translate(Vector3.right * speed * Time.deltaTime);
-        if (Vector2.Distance(transform.position, startPosition) > maxDistance) { Explode(); }
+    } 
+
+    protected virtual void Explode()
+    {
+        ReturnToPool();
     }
 
-    public void OnWeaponDisabled(object sender, System.EventArgs e) => shotPool = null;
-
-    private IEnumerator Charge()
+    protected void ReturnToPool()
     {
-        while (charge < 1)
-        {
-            charge = Mathf.Clamp01(charge + (Time.deltaTime / chargeTime));
-            UpdateChargeValues();
-            yield return null;
-        }
-
-        chargeCoroutine = null;
-    }
-
-    private IEnumerator Discharge()
-    {
-        while (charge > 0)
-        {
-            charge = Mathf.Clamp01(charge - (Time.deltaTime / chargeTime));
-            UpdateChargeValues();
-            yield return null;
-        }
-
-        dischargeCoroutine = null;
-    }
-
-    private void HaltCoroutines()
-    {
-        if (chargeCoroutine != null) 
-        {
-            StopCoroutine(chargeCoroutine);
-            chargeCoroutine = null;
-        }
-
-        if (dischargeCoroutine != null)
-        {
-            StopCoroutine(dischargeCoroutine);
-            dischargeCoroutine = null;
-        }
-    }
-
-    public void Explode()
-    {
-        HaltCoroutines();
         gameObject.SetActive(false);
+        ResetChargeValues();
 
         if (shotPool == null) { Destroy(gameObject); }
         else { shotPool.Release(this); }
+    }
+
+    private void CheckDistanceLimit()
+    {
+        if (Vector2.Distance(transform.position, startPosition) > maxDistance) Explode();
+    }
+
+    private void ResetChargeValues()
+    {
+        chargeValue = 0;
+        power = startPower;
+        speed = startSpeed;
+        shot = false;
     }
 }

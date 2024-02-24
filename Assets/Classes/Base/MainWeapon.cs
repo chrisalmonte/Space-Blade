@@ -63,15 +63,20 @@ public abstract class MainWeapon : MonoBehaviour
         rotationCoroutine = null;
     }
 
+    protected void CancelRotation()
+    {
+        if (rotationCoroutine == null) { return; }
+
+        StopCoroutine(rotationCoroutine);
+        rotationCoroutine = null;
+        shotRotation = targetRotation;
+        directionCache = Vector2.zero;
+    }
+
     protected virtual void HaltCoroutines()
     {
-        if (rotationCoroutine != null)
-        {
-            StopCoroutine(rotationCoroutine);
-            rotationCoroutine = null;
-            directionCache = Vector2.zero;
-        }
-    }
+        CancelRotation();
+    }    
 
     public abstract void Initialize();
     public abstract void Fire();
