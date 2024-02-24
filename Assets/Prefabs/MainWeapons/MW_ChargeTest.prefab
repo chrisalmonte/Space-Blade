@@ -50,7 +50,6 @@ MonoBehaviour:
   rotateGradually: 1
   rotationSpeed: 7.5
   rotationSmoothLvl: 1
-  coolDownTime: 0.3
   activeAfterCancel: 0.1
   ammoPrefab: {fileID: 1280315121906756742, guid: 3342f65ecb973fc439bc548f15ef49e8, type: 3}
   shotPoolDefaultSize: 5

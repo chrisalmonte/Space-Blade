@@ -18,7 +18,8 @@ public class BurstWeapon : MainWeapon
     private Coroutine coolDownCoroutine;
     private IObjectPool<Proyectile> shotPool;
 
-    public event EventHandler WeaponDisabled;
+    public event EventHandler WeaponDestroyed;
+    private void OnWeaponDestroyed() => WeaponDestroyed?.Invoke(this, EventArgs.Empty);
 
     public override void Initialize()
     {
@@ -42,22 +43,17 @@ public class BurstWeapon : MainWeapon
     public override void Deactivate()
     {
         StopFire();
-        HaltCRoutines();
-        if (shotPool != null) { shotPool.Clear(); }
-        OnWeaponDisabled();
+        HaltCoroutines();
         gameObject.SetActive(false);
     }
 
     public override void Discard()
     {
-        StopFire();
-        HaltCRoutines();
+        Deactivate();
+        OnWeaponDestroyed();
         if (shotPool != null) { shotPool.Clear(); }
-        OnWeaponDisabled();
         Destroy(gameObject);
     }
-
-    private void OnWeaponDisabled() => WeaponDisabled?.Invoke(this, EventArgs.Empty);
 
     private IEnumerator BurstShot()
     {
@@ -66,8 +62,10 @@ public class BurstWeapon : MainWeapon
             if (coolDownCoroutine == null)
             {
                 DeployShot();
+                if (!shooting) { break; }
                 coolDownCoroutine = StartCoroutine(WeaponCooldown());
             }
+
             yield return null;
         }
 
@@ -78,28 +76,21 @@ public class BurstWeapon : MainWeapon
     {
         yield return new WaitForSeconds(fireRate);
         coolDownCoroutine = null;
-    }    
+    }
 
-    private void HaltCRoutines()
+    protected override void HaltCoroutines()
     {
-        if (coolDownCoroutine != null)
-        {
-            StopCoroutine(coolDownCoroutine);
-            coolDownCoroutine = null;
-        }
+        base.HaltCoroutines();
 
-        if (shootCoroutine != null)
-        {
-            StopCoroutine(shootCoroutine);
-            shootCoroutine = null;
-        }
+        StopAllCoroutines();
+        shootCoroutine = null;
+        coolDownCoroutine = null;
     }
 
     private void DeployShot()
     {
         if (shotPool == null) return;
         shotPool.Get();
-        OnAmmoExpended();
     }
 
     #region Shot Pooling
@@ -114,14 +105,14 @@ public class BurstWeapon : MainWeapon
     void OnReturnShotToPool(Proyectile shot)
     {
         shot.transform.position = Vector2.zero;
-        WeaponDisabled -= shot.OnWeaponDestroyed;
+        WeaponDestroyed -= shot.OnWeaponDestroyed;
     }
 
     void OnTakeShotFromPool(Proyectile shot)
     {
         shot.transform.SetPositionAndRotation(transform.position, shotRotation);
         shot.gameObject.SetActive(true);
-        WeaponDisabled += shot.OnWeaponDestroyed;
+        WeaponDestroyed += shot.OnWeaponDestroyed;
         OnAmmoExpended();
     }
 

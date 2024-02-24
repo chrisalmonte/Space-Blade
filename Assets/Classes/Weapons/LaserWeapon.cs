@@ -36,7 +36,7 @@ public class LaserWeapon : MainWeapon
         }
         
         laser.transform.rotation = shotRotation;
-        laser.Activate();        
+        laser.Activate();
         shooting = true;
         ammoExpendCoroutine = StartCoroutine(ExpendEnergy());
     }
