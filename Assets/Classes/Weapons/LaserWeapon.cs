@@ -8,6 +8,9 @@ public class LaserWeapon : MainWeapon
     [SerializeField] private float activeAfterCancel = 0.4f;
     [SerializeField] private Laser laser = null;
 
+    private bool expendingAmmo;
+    private bool deactivateAfterOff;
+    private bool discardAfterOff;
     private Coroutine ammoExpendCoroutine;
     private Coroutine cancelCoroutine;
 
@@ -19,11 +22,16 @@ public class LaserWeapon : MainWeapon
     public override void Initialize()
     {
         gameObject.SetActive(true);
+        deactivateAfterOff = false;
         laser.InitializeParameters();
+        laser.LaserReady += OnLaserReady;
+        laser.LaserRoutineEnded += OnLaserShutDown;
     }
 
     public override void Fire()
     {
+        if(deactivateAfterOff) { return; }
+
         if (shooting)
         {
             if (cancelCoroutine != null)
@@ -47,13 +55,6 @@ public class LaserWeapon : MainWeapon
         cancelCoroutine = StartCoroutine(CancelCountdown());
     }
 
-    private void TurnLaserOff()
-    {
-        HaltCoroutines();
-        laser.Deactivate();
-        shooting = false;
-    }
-
     public override void Deactivate()
     {
         TurnLaserOff();
@@ -63,12 +64,34 @@ public class LaserWeapon : MainWeapon
     public override void Discard()
     {
         TurnLaserOff();
-        Destroy(gameObject);
-    }            
+        discardAfterOff = true;
+    }
+
+    private void TurnLaserOff()
+    {
+        expendingAmmo = false;
+        laser.Deactivate();
+    }
+
+    private void OnLaserReady(object sender, System.EventArgs e) => expendingAmmo = true;
+
+    private void OnLaserShutDown(object sender, System.EventArgs e)
+    {
+        shooting = false;
+        HaltCoroutines();
+
+        if (discardAfterOff) { Destroy(gameObject); }
+        else if (deactivateAfterOff)
+        {
+            laser.LaserReady -= OnLaserReady;
+            laser.LaserRoutineEnded -= OnLaserShutDown;
+            gameObject.SetActive(false);
+        }
+    }
 
     private IEnumerator ExpendEnergy()
     {
-        while (shooting)
+        while (expendingAmmo)
         {
             yield return new WaitForSeconds(ammoExpendRate);
             OnAmmoExpended();
@@ -88,16 +111,8 @@ public class LaserWeapon : MainWeapon
     {
         base.HaltCoroutines();
 
-        if (ammoExpendCoroutine != null)
-        {
-            StopCoroutine(ammoExpendCoroutine);
-            ammoExpendCoroutine = null;
-        }
-
-        if (cancelCoroutine != null)
-        {
-            StopCoroutine(cancelCoroutine);
-            cancelCoroutine = null;
-        }
+        StopAllCoroutines();
+        ammoExpendCoroutine = null;
+        cancelCoroutine = null;
     }
 }

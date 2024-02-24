@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,11 @@ public class Laser : MonoBehaviour
 
     private LineRenderer lineRenderer;
 
+    public EventHandler LaserRoutineEnded;
+    public EventHandler LaserReady;
+    private void OnLaserRoutineEnded() => LaserRoutineEnded?.Invoke(this, EventArgs.Empty);
+    private void OnLaserReady() => LaserReady?.Invoke(this, EventArgs.Empty);
+
     private void Update()
     {
         lineRenderer.SetPosition(0, transform.position);
@@ -25,15 +31,17 @@ public class Laser : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void Activate()
+    public virtual void Activate()
     {
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, transform.right * maxLength);
         gameObject.SetActive(true);
+        OnLaserReady();
     }
 
-    public void Deactivate()
+    public virtual void Deactivate()
     {
+        OnLaserRoutineEnded();
         gameObject.SetActive(false);
     }
 }
