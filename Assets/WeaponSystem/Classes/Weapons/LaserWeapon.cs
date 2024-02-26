@@ -57,14 +57,14 @@ public class LaserWeapon : MainWeapon
 
     public override void Deactivate()
     {
+        deactivateAfterOff = true;
         TurnLaserOff();
-        gameObject.SetActive(false);
     }
 
     public override void Discard()
     {
-        TurnLaserOff();
         discardAfterOff = true;
+        TurnLaserOff();
     }
 
     private void TurnLaserOff()
