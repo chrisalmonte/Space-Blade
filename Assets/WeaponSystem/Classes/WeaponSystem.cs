@@ -24,7 +24,7 @@ public class WeaponSystem : MonoBehaviour
     private void Awake()
     {
         shoot = input.actions["SetAttackDirection"];
-        InitializeDeafultMWeapon();
+        InitializeDeafultWeapon();
     }
 
     private void OnEnable()
@@ -93,10 +93,10 @@ public class WeaponSystem : MonoBehaviour
     private void DecreaseAmmo(object sender, System.EventArgs e)
     {
         remainingAmmo -= 1;
-        if (remainingAmmo < 1) { SwitchToDefaultMWeapon(); }
+        if (remainingAmmo < 1) { SwitchToDefaultWeapon(); }
     }
 
-    public void EquipSpecialMWeapon(MainWeapon newWeapon)
+    public void EquipWeapon(MainWeapon newWeapon)
     {
         if (currentWeapon != null) 
         { 
@@ -107,12 +107,12 @@ public class WeaponSystem : MonoBehaviour
 
         //maybe attach to spawn point transform
         currentWeapon = GameObject.Instantiate(newWeapon, transform);
-        SetMWeaponProperties();
+        SetWeaponProperties();
         currentWeapon.AmmoExpended += DecreaseAmmo;
         CheckResumeShoot();
     }
 
-    private void SwitchToDefaultMWeapon()
+    private void SwitchToDefaultWeapon()
     {
         if (currentWeapon == defaultWeapon) { return; }
 
@@ -124,11 +124,11 @@ public class WeaponSystem : MonoBehaviour
         }
 
         currentWeapon = defaultWeapon;
-        SetMWeaponProperties();
+        SetWeaponProperties();
         CheckResumeShoot();
     }
 
-    private void SetMWeaponProperties()
+    private void SetWeaponProperties()
     {
         remainingAmmo = currentWeapon.InitialAmmo;
         currentWeapon.Initialize();
@@ -142,9 +142,9 @@ public class WeaponSystem : MonoBehaviour
         if (atkDirectionDelayCoroutine == null) { atkDirectionDelayCoroutine = StartCoroutine(InputRegisterDelay()); }
     }
     
-    private void InitializeDeafultMWeapon()
+    private void InitializeDeafultWeapon()
     {
         defaultWeapon = GameObject.Instantiate(defaultWeapon, transform);
-        SwitchToDefaultMWeapon();
+        SwitchToDefaultWeapon();
     }
 }

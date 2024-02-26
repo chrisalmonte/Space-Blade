@@ -21,7 +21,7 @@ public class ItemContainer : MonoBehaviour
 
         if(collision.gameObject.TryGetComponent<WeaponSystem>(out player))
         {
-            player.EquipSpecialMWeapon(item) ;
+            player.EquipWeapon(item) ;
         }
         //Container should be destroyed/consumed in the future. Left as is for testing.
     }

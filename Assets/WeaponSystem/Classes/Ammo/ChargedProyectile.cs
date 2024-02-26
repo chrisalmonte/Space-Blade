@@ -26,10 +26,10 @@ public class ChargedProyectile : MonoBehaviour
     public EventHandler DestroyedWhileHeld;
     private void OnHitWhileHeld() => DestroyedWhileHeld?.Invoke(this, EventArgs.Empty);
 
-    public float ChargeValue() => chargeValue;
-    public float ChargeTime() => chargeTime;
-    public float MinCharge() => minChargeValue;
-    public bool ChargeLostGradually() => chargelostGradually;
+    public float ChargeValue => chargeValue;
+    public float ChargeTime => chargeTime;
+    public float MinCharge => minChargeValue;
+    public bool ChargeLostGradually => chargelostGradually;
 
     private void Update()
     {

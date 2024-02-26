@@ -27,16 +27,16 @@ public class DebugTools : MonoBehaviour
 
     private void giveWeapon()
     {
-        if (weaponSystem != null) weaponSystem.EquipSpecialMWeapon(testWeapon);
+        if (weaponSystem != null) weaponSystem.EquipWeapon(testWeapon);
     }
     private void giveWeapon2()
     {
-        if (weaponSystem != null) weaponSystem.EquipSpecialMWeapon(testWeapon2);
+        if (weaponSystem != null) weaponSystem.EquipWeapon(testWeapon2);
     }
     
     private void giveWeapon3()
     {
-        if (weaponSystem != null) weaponSystem.EquipSpecialMWeapon(testWeapon3);
+        if (weaponSystem != null) weaponSystem.EquipWeapon(testWeapon3);
     }
 
 }

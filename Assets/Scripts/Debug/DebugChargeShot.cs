@@ -8,11 +8,11 @@ public class DebugChargeShot : MonoBehaviour
 
     private void OnEnable()
     {
-        transform.localScale = Vector2.one * shot.ChargeValue();
+        transform.localScale = Vector2.one * shot.ChargeValue;
     }
 
     private void Update()
     {
-        transform.localScale = Vector2.one * shot.ChargeValue();
+        transform.localScale = Vector2.one * shot.ChargeValue;
     }
 }

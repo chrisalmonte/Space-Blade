@@ -59,7 +59,7 @@ public class ChargeWeapon : MainWeapon
 
         if (heldShot != null)
         {
-            if (heldShot.ChargeValue() >= heldShot.MinCharge()) { ShootCharge(); }
+            if (heldShot.ChargeValue >= heldShot.MinCharge) { ShootCharge(); }
             else { heldShot.DisipateCharge(); }
             shooting = false;
         }   
@@ -101,10 +101,10 @@ public class ChargeWeapon : MainWeapon
             chargeCoroutine = null;
         }
 
-        if (heldShot.ChargeValue() >= heldShot.MinCharge()) { ShootCharge(); }
+        if (heldShot.ChargeValue >= heldShot.MinCharge) { ShootCharge(); }
         else
         {
-            if (heldShot.ChargeLostGradually()) { dischargeCoroutine = StartCoroutine(Discharge()); }
+            if (heldShot.ChargeLostGradually) { dischargeCoroutine = StartCoroutine(Discharge()); }
             else 
             { 
                 heldShot.DisipateCharge();
@@ -126,16 +126,16 @@ public class ChargeWeapon : MainWeapon
 
     private IEnumerator Charge()
     {
-        float chargeTime = heldShot.ChargeTime();
+        float chargeTime = heldShot.ChargeTime;
 
-        if (heldShot.ChargeTime() <= 0)
+        if (heldShot.ChargeTime <= 0)
         {
             heldShot.AddCharge(1);
         }
 
         else
         {
-            while (heldShot.ChargeValue() < 1)
+            while (heldShot.ChargeValue < 1)
             {
                 heldShot.AddCharge(Time.deltaTime / chargeTime);
                 yield return null;
@@ -147,16 +147,16 @@ public class ChargeWeapon : MainWeapon
 
     private IEnumerator Discharge()
     {
-        float chargeTime = heldShot.ChargeTime();
+        float chargeTime = heldShot.ChargeTime;
 
-        if (heldShot.ChargeTime() <= 0)
+        if (heldShot.ChargeTime <= 0)
         {
             heldShot.AddCharge(-1);
         }
 
         else
         {
-            while (heldShot.ChargeValue() > 0)
+            while (heldShot.ChargeValue > 0)
             {
                 heldShot.AddCharge(-Time.deltaTime / chargeTime);
                 yield return null;
