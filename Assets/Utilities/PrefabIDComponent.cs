@@ -16,20 +16,27 @@ public class PrefabIDComponent : MonoBehaviour
     public string ObjectID => objectID == null ? string.Empty : objectID;
 
 #if UNITY_EDITOR
-    private void OnValidate() => UpdatePrefabID();
-
-    private void UpdatePrefabID()
+    public void UpdatePrefabID()
     {
-        if (!PrefabUtility.IsPartOfPrefabAsset(this)){ return; }
+        if (!PrefabUtility.IsPartOfPrefabAsset(this))
+        {
+            Debug.LogWarning("Trying to edit prefab ID on an instance.", this);
+            return; 
+        }
 
         string path = AssetDatabase.GetAssetPath(gameObject)?.ToString();
-        if (path == null || path.Equals("")) { return; }
+        if (path == null || path.Equals("")) 
+        {
+            Debug.LogWarning("Invalid prefab path: " + path, this);
+            return; 
+        }
 
         Regex rgxPrefabName = new Regex(@"[^//]*(?=\.prefab)");
         string candidateID = rgxPrefabName.Match(path).Value;
         
         if(candidateID.Equals(objectID)) { return; }
         objectID = candidateID;
+        Debug.Log("Assigned ID \"" + objectID + "\" to prefab " + path);
 
         PrefabIDComponent[] prefabIDs = Resources.FindObjectsOfTypeAll<PrefabIDComponent>();
 
@@ -38,14 +45,14 @@ public class PrefabIDComponent : MonoBehaviour
             if (prefab.objectID != null && prefab.objectID.Equals(objectID) && prefab != this)
             {
                 objectID += "_" + AssetDatabase.GUIDFromAssetPath(path);
-                Debug.LogWarning(prefab.objectID + " already exist. Please consider using a different name." +
-                    "\nGUID has been appended to ID to avoid duplication.");
+
+                Debug.LogWarning(prefab.objectID + " already exists. Please consider using a different name." +
+                    "\nGUID has been appended to objectID to avoid duplication." +
+                    "\nReassigned ID to " + objectID, this);
 
                 break;
             }
         }
-
-        Debug.Log("Assigned ID \"" + objectID + "\" to prefab " + path);
     }
 #endif
 }

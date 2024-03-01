@@ -67,4 +67,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0178b89e91a430f4cbd84cd05d7b99fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectID: MW_ChargeTestll
+  objectID: MW_ChargeTest
