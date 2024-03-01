@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9074162666674708621}
   - component: {fileID: 8980096107776906133}
+  - component: {fileID: 2822177030360095948}
   m_Layer: 0
   m_Name: MW_TestLaser
   m_TagString: Untagged
@@ -54,6 +55,19 @@ MonoBehaviour:
   ammoExpendRate: 0.05
   activeAfterCancel: 0.15
   laser: {fileID: 8405236669527956482}
+--- !u!114 &2822177030360095948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4067071256724972345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0178b89e91a430f4cbd84cd05d7b99fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectID: MW_TestLaser
 --- !u!1001 &3363701802545563469
 PrefabInstance:
   m_ObjectHideFlags: 0

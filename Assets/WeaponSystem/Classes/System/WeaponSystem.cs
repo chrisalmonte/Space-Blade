@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,10 +17,16 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private int maxAmmoValue = 9999;
 
     private int remainingAmmo;
+    private Vector2 atkDirection;
     private MainWeapon currentWeapon;
     private Coroutine atkDirectionDelayCoroutine;
-    private Vector2 atkDirection;
     private InputAction shoot;
+
+    public EventHandler AmmoChanged;
+    private void OnAmmoChanged() 
+    {
+        AmmoChanged?.Invoke(this, EventArgs.Empty);
+    } 
 
     private void Awake()
     {
@@ -88,16 +95,24 @@ public class WeaponSystem : MonoBehaviour
     public void IncreaseAmmo(int amount)
     {
         remainingAmmo = Mathf.Min(remainingAmmo + amount, maxAmmoValue);
+        OnAmmoChanged();
     }
 
     private void DecreaseAmmo(object sender, System.EventArgs e)
     {
         remainingAmmo -= 1;
+        OnAmmoChanged();
         if (remainingAmmo < 1) { SwitchToDefaultWeapon(); }
     }
 
-    public void EquipWeapon(MainWeapon newWeapon)
+    public void EquipWeapon(MainWeapon obtainedWeapon)
     {
+        if (currentWeapon.ID.Equals(obtainedWeapon.ID))
+        {
+            IncreaseAmmo(obtainedWeapon.InitialAmmo);
+            return;
+        }
+
         if (currentWeapon != null) 
         { 
             CancelShoot();
@@ -106,7 +121,7 @@ public class WeaponSystem : MonoBehaviour
         }
 
         //maybe attach to spawn point transform
-        currentWeapon = GameObject.Instantiate(newWeapon, transform);
+        currentWeapon = GameObject.Instantiate(obtainedWeapon, transform);
         SetWeaponProperties();
         currentWeapon.AmmoExpended += DecreaseAmmo;
         CheckResumeShoot();
@@ -131,6 +146,7 @@ public class WeaponSystem : MonoBehaviour
     private void SetWeaponProperties()
     {
         remainingAmmo = currentWeapon.InitialAmmo;
+        OnAmmoChanged();
         currentWeapon.Initialize();
     }
 

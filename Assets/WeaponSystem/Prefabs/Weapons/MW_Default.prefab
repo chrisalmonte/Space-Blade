@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 860721397515258687}
   - component: {fileID: 2011359257515990104}
+  - component: {fileID: 2863248524848486916}
   m_Layer: 0
   m_Name: MW_Default
   m_TagString: Untagged
@@ -54,3 +55,16 @@ MonoBehaviour:
   ammoPrefab: {fileID: 451882636998692569, guid: d4631cacc7a6a4841bfe92b5462c4302, type: 3}
   shotPoolDefaultSize: 50
   shotPoolMaxSize: 400
+--- !u!114 &2863248524848486916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6640357729998852594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0178b89e91a430f4cbd84cd05d7b99fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectID: MW_Default

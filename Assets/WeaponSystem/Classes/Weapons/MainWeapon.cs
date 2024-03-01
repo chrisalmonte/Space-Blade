@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(PrefabIDComponent))]
+
 public abstract class MainWeapon : MonoBehaviour
 {
     [Header("Properties")]
@@ -24,6 +26,7 @@ public abstract class MainWeapon : MonoBehaviour
     private Vector2 directionCache;
 
     public string WeaponName => weaponName;
+    public string ID => GetComponent<PrefabIDComponent>().ObjectID;
     public int InitialAmmo => initialAmmo;
     public Sprite ItemSprite => itemSprite;
 
