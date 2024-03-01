@@ -12,9 +12,7 @@ public class PrefabIDComponent : MonoBehaviour
 {
     //Creates and saves a unique ID for objects saved as a prefab, which is inherited by their instances.
 
-    //[HideInInspector, SerializeField] private string objectID;
-    [SerializeField] private string objectID;    
-
+    [SerializeField, HideInInspector] private string objectID;
     public string ObjectID => objectID == null ? string.Empty : objectID;
 
 #if UNITY_EDITOR
