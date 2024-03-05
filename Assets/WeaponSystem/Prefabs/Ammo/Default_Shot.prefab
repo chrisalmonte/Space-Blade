@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 379914446493022786}
   - component: {fileID: 451882636998692569}
-  m_Layer: 0
+  - component: {fileID: 2852520033904797571}
+  m_Layer: 11
   m_Name: Default_Shot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,6 +49,41 @@ MonoBehaviour:
   power: 1
   speed: 24
   maxDistance: 30
+--- !u!58 &2852520033904797571
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5377482801928895892}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 2147483647
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 2147483647
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 2147483647
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 2147483647
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.16
 --- !u!1 &6011955360209654952
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 788435661793656440}
   - component: {fileID: 4085379469438768465}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}

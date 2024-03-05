@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
+[RequireComponent(typeof(Collider2D))]
 public class Proyectile : MonoBehaviour
 {
     [SerializeField] private float power = 1;
     [SerializeField] private float speed = 25;
     [SerializeField] private float maxDistance = 30;
 
+    private bool hasCollided;
     private Vector2 startPosition;
     private IObjectPool<Proyectile> shotPool;
     
     protected virtual void OnEnable()
     {
         startPosition = transform.position;
+        hasCollided = false;
     }
 
     private void Update()
@@ -33,8 +36,9 @@ public class Proyectile : MonoBehaviour
         transform.Translate(Vector3.right * speed * Time.deltaTime);        
     }
 
-    protected virtual void Explode() 
+    protected virtual void OnShotCollided() 
     {
+        hasCollided = true;
         ReturnToPool();
     }
     
@@ -47,15 +51,19 @@ public class Proyectile : MonoBehaviour
 
     private void CheckDistanceLimit()
     {
-        if (Vector2.Distance(transform.position, startPosition) > maxDistance) Explode();
+        if (Vector2.Distance(transform.position, startPosition) > maxDistance) OnShotCollided();
     }
 
-    protected virtual void Damage(/*Recieve Damageable/atackable class to send attack data*/)
+    protected virtual void Damage(IDamageable target)
     {
-
+        target.Damage(power);
     }
 
-    //OnTrigger/CollisionEnter -> Damage (if possible), then explode(always).
+    public void OnWeaponDestroyed(object sender, System.EventArgs e) => shotPool = null;
 
-    public void OnWeaponDestroyed(object sender, System.EventArgs e) => shotPool = null;    
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.TryGetComponent<IDamageable>(out IDamageable target)) { Damage(target); }
+        if (!hasCollided) { OnShotCollided(); }
+    }
 }
