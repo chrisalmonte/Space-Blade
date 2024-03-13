@@ -96,7 +96,7 @@ public class BurstWeapon : MainWeapon
     #region Shot Pooling
     Proyectile ShotInstance()
     {
-        Proyectile shot = GameObject.Instantiate(ammoPrefab, transform.position, Quaternion.identity);
+        Proyectile shot = Instantiate(ammoPrefab, transform.position, Quaternion.identity);
         shot.Initialize(shotPool);
         shot.gameObject.SetActive(false);        
         return shot;
@@ -111,8 +111,9 @@ public class BurstWeapon : MainWeapon
     void OnTakeShotFromPool(Proyectile shot)
     {
         shot.transform.SetPositionAndRotation(transform.position, shotRotation);
-        shot.gameObject.SetActive(true);
         WeaponDestroyed += shot.OnWeaponDestroyed;
+        shot.gameObject.SetActive(true);
+        shot.Deploy();
         OnAmmoExpended();
     }
 

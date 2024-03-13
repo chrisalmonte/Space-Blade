@@ -52,7 +52,7 @@ MonoBehaviour:
   rotationSpeed: 7.5
   rotationSmoothLvl: 1
   activeAfterCancel: 0.1
-  ammoPrefab: {fileID: 1280315121906756742, guid: 3342f65ecb973fc439bc548f15ef49e8, type: 3}
+  ammoPrefab: {fileID: 6570260460636381243, guid: 3342f65ecb973fc439bc548f15ef49e8, type: 3}
   shotPoolDefaultSize: 5
   shotPoolMaxSize: 20
 --- !u!114 &8403050389120519754

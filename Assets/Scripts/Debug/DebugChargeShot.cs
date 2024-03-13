@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DebugChargeShot : MonoBehaviour
 {
-    [SerializeField] private ChargedProyectile shot;
+    [SerializeField] private ProyectileCharged shot;
 
     private void OnEnable()
     {

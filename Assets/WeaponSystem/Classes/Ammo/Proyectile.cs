@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-[RequireComponent(typeof(Collider2D))]
 public class Proyectile : MonoBehaviour
 {
-    [SerializeField] private float power = 1;
-    [SerializeField] private float speed = 25;
+    [SerializeField] protected float power = 1;
+    [SerializeField] protected float speed = 25;
     [SerializeField] private float maxDistance = 30;
 
     private bool hasCollided;
-    private Vector2 startPosition;
+    protected Vector2 startPosition;
     private IObjectPool<Proyectile> shotPool;
-    
-    protected virtual void OnEnable()
+
+    public virtual void Deploy()
     {
         startPosition = transform.position;
         hasCollided = false;
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         Move();
         CheckDistanceLimit();
@@ -29,6 +28,7 @@ public class Proyectile : MonoBehaviour
     public void Initialize(IObjectPool<Proyectile> weaponShotPool)
     {
         shotPool = weaponShotPool;
+        OnInitialized();
     }
 
     protected virtual void Move()
@@ -44,12 +44,13 @@ public class Proyectile : MonoBehaviour
     
     private void ReturnToPool()
     {
+        OnReturnToPool();
         gameObject.SetActive(false);
         if (shotPool == null) { Destroy(gameObject); }
         else shotPool.Release(this);
     }
 
-    private void CheckDistanceLimit()
+    protected void CheckDistanceLimit()
     {
         if (Vector2.Distance(transform.position, startPosition) > maxDistance) OnShotCollided();
     }
@@ -66,4 +67,7 @@ public class Proyectile : MonoBehaviour
         if (collision.gameObject.TryGetComponent<IDamageable>(out IDamageable target)) { Damage(target); }
         if (!hasCollided) { OnShotCollided(); }
     }
+
+    protected virtual void OnReturnToPool() { }
+    protected virtual void OnInitialized() { }
 }

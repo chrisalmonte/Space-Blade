@@ -7,17 +7,17 @@ public class ChargeWeapon : MainWeapon
 {
     [Header("Weapon Properties")]
     [SerializeField] [Range(0, 1)] private float activeAfterCancel = 0.1f;
-    [SerializeField] private ChargedProyectile ammoPrefab = null;
+    [SerializeField] private ProyectileCharged ammoPrefab = null;
 
     [Header("Shot Pool Properties")]
     [SerializeField] [Min(5)] private int shotPoolDefaultSize = 5;
     [SerializeField] [Min(10)] private int shotPoolMaxSize = 10;
 
-    private ChargedProyectile heldShot;
+    private ProyectileCharged heldShot;
     private Coroutine cancelCoroutine;
     private Coroutine chargeCoroutine;
     private Coroutine dischargeCoroutine;
-    private IObjectPool<ChargedProyectile> shotPool;
+    private IObjectPool<Proyectile> shotPool;
 
     public event EventHandler WeaponDisabled;
 
@@ -31,7 +31,7 @@ public class ChargeWeapon : MainWeapon
         gameObject.SetActive(true);
 
         if (shotPool != null) return;
-        shotPool = new ObjectPool<ChargedProyectile>(ShotInstance, OnTakeShotFromPool, OnReturnShotToPool,
+        shotPool = new ObjectPool<Proyectile>(ShotInstance, OnTakeShotFromPool, OnReturnShotToPool,
             OnDestroyShotInstance, true, shotPoolDefaultSize, shotPoolMaxSize);
     }
 
@@ -204,31 +204,31 @@ public class ChargeWeapon : MainWeapon
     }
 
     #region Shot Pooling
-    ChargedProyectile ShotInstance()
+    ProyectileCharged ShotInstance()
     {
-        ChargedProyectile shot = GameObject.Instantiate(ammoPrefab, transform.position, Quaternion.identity);
+        ProyectileCharged shot = Instantiate(ammoPrefab, transform.position, Quaternion.identity);
         shot.Initialize(shotPool);
         shot.gameObject.SetActive(false);
         return shot;
     }
 
-    void OnReturnShotToPool(ChargedProyectile shot)
+    void OnReturnShotToPool(Proyectile shot)
     {
         shot.transform.position = Vector2.zero;
-        WeaponDisabled -= shot.OnWeaponDisabled;
+        WeaponDisabled -= shot.OnWeaponDestroyed;
     }
 
-    void OnTakeShotFromPool(ChargedProyectile shot)
+    void OnTakeShotFromPool(Proyectile shot)
     {
         shot.transform.SetPositionAndRotation(transform.position, shotRotation);
         shot.transform.parent = transform;
-        shot.DestroyedWhileHeld += HeldShotDestroyed;
-        WeaponDisabled += shot.OnWeaponDisabled;
-        heldShot = shot;
+        (shot as ProyectileCharged).DestroyedWhileHeld += HeldShotDestroyed;
+        WeaponDisabled += shot.OnWeaponDestroyed;
+        heldShot = (shot as ProyectileCharged);
         shot.gameObject.SetActive(true);
     }
 
-    void OnDestroyShotInstance(ChargedProyectile shot)
+    void OnDestroyShotInstance(Proyectile shot)
     {
         Destroy(shot.gameObject);
     }
