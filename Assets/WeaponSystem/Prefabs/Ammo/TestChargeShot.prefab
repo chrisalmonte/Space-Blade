@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7101039931412733209}
   - component: {fileID: 3231034332712418598}
   - component: {fileID: 7519317064465612991}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ GameObject:
   - component: {fileID: 5944970623941208975}
   - component: {fileID: 6570260460636381243}
   - component: {fileID: 3593861018644008250}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: TestChargeShot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -186,8 +186,8 @@ MonoBehaviour:
   chargedPower: 15
   chargedSpeed: 50
   chargeTime: 2
-  chargelostGradually: 0
-  minChargeValue: 0.6
+  chargelostGradually: 1
+  minChargeValue: 0.8
 --- !u!50 &3593861018644008250
 Rigidbody2D:
   serializedVersion: 4

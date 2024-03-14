@@ -16,7 +16,6 @@ public class Proyectile : MonoBehaviour
     public virtual void Deploy()
     {
         startPosition = transform.position;
-        hasCollided = false;
     }
 
     protected virtual void Update()
@@ -45,6 +44,7 @@ public class Proyectile : MonoBehaviour
     private void ReturnToPool()
     {
         OnReturnToPool();
+        hasCollided = false;
         gameObject.SetActive(false);
         if (shotPool == null) { Destroy(gameObject); }
         else shotPool.Release(this);

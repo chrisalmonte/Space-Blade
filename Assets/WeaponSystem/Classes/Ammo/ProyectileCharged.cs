@@ -18,8 +18,8 @@ public class ProyectileCharged : Proyectile
     private float currentPower;
     private float chargeValue;
 
-    public EventHandler DestroyedWhileHeld;
-    private void OnHitWhileHeld() => DestroyedWhileHeld?.Invoke(this, EventArgs.Empty);
+    public event EventHandler DestroyedWhileHeld;
+    private void OnHitWhileHeld() { DestroyedWhileHeld?.Invoke(this, EventArgs.Empty); }
     public float ChargeValue => chargeValue;
     public float ChargeTime => chargeTime;
     public float MinCharge => minChargeValue;
@@ -69,4 +69,15 @@ public class ProyectileCharged : Proyectile
     protected override void Damage(IDamageable target) => target.Damage(currentPower);
     protected override void OnInitialized() => ResetChargeValues();
     protected override void OnReturnToPool() => ResetChargeValues();
+
+    protected override void OnShotCollided()
+    {
+        if (!shot)
+        {
+            OnHitWhileHeld();
+            DisipateCharge();
+        }
+
+        base.OnShotCollided();
+    }
 }
