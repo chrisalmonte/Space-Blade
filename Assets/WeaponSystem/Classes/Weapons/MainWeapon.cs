@@ -12,6 +12,9 @@ public abstract class MainWeapon : MonoBehaviour
     [SerializeField] private string weaponName = "New Weapon Name";
     [SerializeField] [Min(1)] private int initialAmmo = 100;
 
+    [Header("Attack Properties")]
+    [SerializeField] protected float basePower = 1;
+
     [Header("Shot Direction Rotation")]
     [Tooltip("If false, direction changes will be instant")]
     [SerializeField]  private bool rotateGradually;

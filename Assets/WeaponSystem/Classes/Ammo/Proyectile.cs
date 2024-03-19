@@ -5,13 +5,13 @@ using UnityEngine.Pool;
 
 public class Proyectile : MonoBehaviour
 {
-    [SerializeField] protected float power = 1;
-    [SerializeField] protected float speed = 25;
     [SerializeField] private float maxDistance = 30;
 
     private bool hasCollided;
-    protected Vector2 startPosition;
+    protected float power;
+    protected float speed;
     private IObjectPool<Proyectile> shotPool;
+    protected Vector2 startPosition;
 
     public virtual void Deploy()
     {
@@ -24,9 +24,11 @@ public class Proyectile : MonoBehaviour
         CheckDistanceLimit();
     }
 
-    public void Initialize(IObjectPool<Proyectile> weaponShotPool)
+    public void Initialize(IObjectPool<Proyectile> weaponShotPool, float basePower, float baseSpeed)
     {
         shotPool = weaponShotPool;
+        power = basePower;
+        speed = baseSpeed;
         OnInitialized();
     }
 

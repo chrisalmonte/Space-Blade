@@ -8,6 +8,7 @@ public class BurstWeapon : MainWeapon
 {
     [Header("Firing Properties")]
     [SerializeField] private float fireRate = 0.3f;
+    [SerializeField] private float shotSpeed = 25;
     [SerializeField] private Proyectile ammoPrefab = null;
 
     [Header("Shot Pool Properties")]
@@ -97,7 +98,7 @@ public class BurstWeapon : MainWeapon
     Proyectile ShotInstance()
     {
         Proyectile shot = Instantiate(ammoPrefab, transform.position, Quaternion.identity);
-        shot.Initialize(shotPool);
+        shot.Initialize(shotPool, basePower, shotSpeed);
         shot.gameObject.SetActive(false);        
         return shot;
     }

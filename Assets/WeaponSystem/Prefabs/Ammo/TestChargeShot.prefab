@@ -180,14 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d31b48e36d45d654bb357dc230d239d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  power: 5
-  speed: 3
   maxDistance: 30
-  chargedPower: 15
-  chargedSpeed: 50
-  chargeTime: 2
-  chargelostGradually: 1
-  minChargeValue: 0.8
 --- !u!50 &3593861018644008250
 Rigidbody2D:
   serializedVersion: 4

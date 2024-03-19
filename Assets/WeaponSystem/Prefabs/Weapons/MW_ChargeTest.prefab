@@ -48,9 +48,16 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: 8695e88ab581a514c8a5770ea87f009c, type: 3}
   weaponName: Test Charge Weapon
   initialAmmo: 100
+  basePower: 1
   rotateGradually: 1
   rotationSpeed: 7.5
   rotationSmoothLvl: 1
+  chargedPower: 10
+  baseShotSpeed: 25
+  chargedShotSpeed: 70
+  chargeTime: 2
+  chargelostGradually: 1
+  chargeToShoot: 0.75
   activeAfterCancel: 0.1
   ammoPrefab: {fileID: 6570260460636381243, guid: 3342f65ecb973fc439bc548f15ef49e8, type: 3}
   shotPoolDefaultSize: 5

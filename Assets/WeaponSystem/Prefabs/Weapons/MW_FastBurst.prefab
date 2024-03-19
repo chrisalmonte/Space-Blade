@@ -48,10 +48,12 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: a94838fa3ad53f045b97985cd19d88af, type: 3}
   weaponName: Test Burst
   initialAmmo: 100
+  basePower: 1
   rotateGradually: 0
   rotationSpeed: 0
   rotationSmoothLvl: 1
   fireRate: 0.09
+  shotSpeed: 25
   ammoPrefab: {fileID: 451882636998692569, guid: bd9f06ad511f5284a99d21f24ade67a5, type: 3}
   shotPoolDefaultSize: 50
   shotPoolMaxSize: 400

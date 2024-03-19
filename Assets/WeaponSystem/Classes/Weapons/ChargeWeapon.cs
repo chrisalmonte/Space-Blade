@@ -5,6 +5,14 @@ using UnityEngine.Pool;
 
 public class ChargeWeapon : MainWeapon
 {
+    [Header("Charge Properties")]
+    [SerializeField] private float chargedPower = 5;
+    [SerializeField] private float baseShotSpeed = 25;
+    [SerializeField] private float chargedShotSpeed = 70;
+    [SerializeField] private float chargeTime = 2;
+    [SerializeField] private bool chargelostGradually;
+    [SerializeField] [Range(0, 1)] private float chargeToShoot = 0.4f;
+
     [Header("Weapon Properties")]
     [SerializeField] [Range(0, 1)] private float activeAfterCancel = 0.1f;
     [SerializeField] private ProyectileCharged ammoPrefab = null;
@@ -59,7 +67,7 @@ public class ChargeWeapon : MainWeapon
 
         if (heldShot != null)
         {
-            if (heldShot.ChargeValue >= heldShot.MinCharge) { ShootCharge(); }
+            if (heldShot.ChargeValue >= chargeToShoot) { ShootCharge(); }
             else { heldShot.DisipateCharge(); }
             shooting = false;
         }   
@@ -101,10 +109,10 @@ public class ChargeWeapon : MainWeapon
             chargeCoroutine = null;
         }
 
-        if (heldShot.ChargeValue >= heldShot.MinCharge) { ShootCharge(); }
+        if (heldShot.ChargeValue >= chargeToShoot) { ShootCharge(); }
         else
         {
-            if (heldShot.ChargeLostGradually) { dischargeCoroutine = StartCoroutine(Discharge()); }
+            if (chargelostGradually) { dischargeCoroutine = StartCoroutine(Discharge()); }
             else 
             { 
                 heldShot.DisipateCharge();
@@ -124,11 +132,16 @@ public class ChargeWeapon : MainWeapon
         shooting = false;
     }
 
+    private void UpdateChargeValues()
+    {
+        float power = Mathf.Lerp(basePower, chargedPower, heldShot.ChargeValue);
+        float speed = Mathf.Lerp(baseShotSpeed, chargedShotSpeed, heldShot.ChargeValue);
+        heldShot.UpdateShotProperties(power, speed);
+    }
+
     private IEnumerator Charge()
     {
-        float chargeTime = heldShot.ChargeTime;
-
-        if (heldShot.ChargeTime <= 0)
+        if (chargeTime <= 0)
         {
             heldShot.AddCharge(1);
         }
@@ -138,6 +151,7 @@ public class ChargeWeapon : MainWeapon
             while (heldShot.ChargeValue < 1)
             {
                 heldShot.AddCharge(Time.deltaTime / chargeTime);
+                UpdateChargeValues();
                 yield return null;
             }
         }
@@ -147,9 +161,7 @@ public class ChargeWeapon : MainWeapon
 
     private IEnumerator Discharge()
     {
-        float chargeTime = heldShot.ChargeTime;
-
-        if (heldShot.ChargeTime <= 0)
+        if (chargeTime <= 0)
         {
             heldShot.AddCharge(-1);
         }
@@ -159,6 +171,7 @@ public class ChargeWeapon : MainWeapon
             while (heldShot.ChargeValue > 0)
             {
                 heldShot.AddCharge(-Time.deltaTime / chargeTime);
+                UpdateChargeValues();
                 yield return null;
             }
         }
@@ -207,7 +220,7 @@ public class ChargeWeapon : MainWeapon
     ProyectileCharged ShotInstance()
     {
         ProyectileCharged shot = Instantiate(ammoPrefab, transform.position, Quaternion.identity);
-        shot.Initialize(shotPool);
+        shot.Initialize(shotPool, basePower, baseShotSpeed);
         shot.gameObject.SetActive(false);
         return shot;
     }
