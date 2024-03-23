@@ -71,10 +71,12 @@ public abstract class MainWeapon : MonoBehaviour
 
     protected void CancelRotation()
     {
-        if (rotationCoroutine == null) { return; }
+        if (rotationCoroutine != null) 
+        {
+            StopCoroutine(rotationCoroutine);
+            rotationCoroutine = null;
+        }
 
-        StopCoroutine(rotationCoroutine);
-        rotationCoroutine = null;
         shotRotation = targetRotation;
         directionCache = Vector2.zero;
     }
