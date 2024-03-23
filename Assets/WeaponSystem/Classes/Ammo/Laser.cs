@@ -7,34 +7,44 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
-    [SerializeField] private float maxLength = 25;
-    [SerializeField] private float damageRate = 0.2f;
+    [SerializeField] private float damagePerSecond = 2;
     [SerializeField] private float chargeTime = 0.7f;
+    [SerializeField] private float maxLength = 25;
     [SerializeField] private bool penetrates = true;
 
     private LineRenderer lineRenderer;
-
+    private float laserLength;
+    
     public EventHandler LaserRoutineEnded;
     public EventHandler LaserReady;
     private void OnLaserRoutineEnded() => LaserRoutineEnded?.Invoke(this, EventArgs.Empty);
     private void OnLaserReady() => LaserReady?.Invoke(this, EventArgs.Empty);
 
-    private void Update()
+    private void FixedUpdate()
     {
-        lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, transform.position + (transform.right * maxLength));
+        UpdateLaserLength();
+
+        LayerMask onlyEnemies = LayerMask.GetMask("Enemies");
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.right, laserLength, onlyEnemies);
+        foreach (var hit in hits)
+        {
+            if (hit.collider.gameObject.TryGetComponent<IDamageable>(out IDamageable damageable))
+            {
+                damageable.Damage(damagePerSecond * Time.fixedDeltaTime);
+            }
+        }
     }
 
     public void InitializeParameters()
     {
         lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer.useWorldSpace = false;
         gameObject.SetActive(false);
     }
 
     public virtual void Activate()
     {
-        lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, transform.right * maxLength);
+        UpdateLaserLength();
         gameObject.SetActive(true);
         OnLaserReady();
     }
@@ -42,6 +52,16 @@ public class Laser : MonoBehaviour
     public virtual void Deactivate()
     {
         OnLaserRoutineEnded();
+        StopAllCoroutines();
         gameObject.SetActive(false);
+    }
+
+    private void UpdateLaserLength()
+    {
+        LayerMask onlyObstacles = LayerMask.GetMask("Obstacles");
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, maxLength, onlyObstacles);
+        laserLength = hit.collider != null ? hit.distance : maxLength;
+        lineRenderer.SetPosition(0, Vector2.zero);
+        lineRenderer.SetPosition(1, Vector2.right * laserLength);
     }
 }
