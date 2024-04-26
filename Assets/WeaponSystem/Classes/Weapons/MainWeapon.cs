@@ -43,11 +43,12 @@ public abstract class MainWeapon : MonoBehaviour
 
         if (rotateGradually && shooting)
         {
-            targetRotation = Quaternion.LookRotation(Vector3.forward, newDirection) * Quaternion.Euler(0, 0, 90);
+            targetRotation = Quaternion.LookRotation(Vector3.forward, Vector2.Perpendicular(newDirection));
             if (rotationCoroutine != null) { StopCoroutine(rotationCoroutine); }
             rotationCoroutine = StartCoroutine(RotateShot());
         }
-        else { shotRotation = Quaternion.FromToRotation(Vector3.right, newDirection); }
+
+        else { shotRotation = Quaternion.LookRotation(Vector3.forward, Vector2.Perpendicular(newDirection)); }
     }
 
     protected virtual IEnumerator RotateShot()
