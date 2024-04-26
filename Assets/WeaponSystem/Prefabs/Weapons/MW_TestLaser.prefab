@@ -49,12 +49,13 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: 8b0129476a8bb5d449dd6f97843dea1d, type: 3}
   weaponName: Test Laser
   initialAmmo: 100
-  basePower: 3
+  basePower: 10
   rotateGradually: 1
   rotationSpeed: 2.1
   rotationSmoothLvl: 2
   ammoExpendRate: 0.05
   activeAfterCancel: 0.15
+  maxLength: 25
   laser: {fileID: 8405236669527956482}
 --- !u!114 &2822177030360095948
 MonoBehaviour:

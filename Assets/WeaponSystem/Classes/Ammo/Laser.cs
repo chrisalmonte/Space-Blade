@@ -7,17 +7,15 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
-    [SerializeField] private float damagePerSecond = 2;
-    [SerializeField] private float chargeTime = 0.7f;
-    [SerializeField] private float maxLength = 25;
-
-    [Header("Damage Raycast")]
+    [Header("Damage Raycast Type")]
     [SerializeField] private CastType castType;
     [Tooltip("Thickness of box or distance between rays in spread mode")]
     [SerializeField] [Min(0)] private float spreadAmount = 0.05f;
     [Tooltip("Extra pairs of spread raycasts")]
     [SerializeField] [Range(1, 6)] private byte spreadPairs = 1;
 
+    private float damagePerSecond;
+    private float maxLength;
     private float laserLength;
     private Vector3 laserEndPoint;
     private Vector2 laserShape;
@@ -55,8 +53,11 @@ public class Laser : MonoBehaviour
         DamageHitList(damagePerSecond * Time.fixedDeltaTime);
     }
 
-    public void InitializeParameters()
+    public void InitializeParameters(float damage, float length)
     {
+        damagePerSecond = damage;
+        maxLength = length;
+
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.useWorldSpace = false;
         enemyFilter.SetLayerMask(LayerMask.GetMask("Enemies"));

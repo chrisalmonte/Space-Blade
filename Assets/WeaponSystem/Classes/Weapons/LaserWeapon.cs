@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class LaserWeapon : MainWeapon
 {
+    [Header("Laser Properties")]
     [SerializeField] private float ammoExpendRate = 0.05f;
     [SerializeField] private float activeAfterCancel = 0.4f;
+    [SerializeField] private float maxLength = 25;
     [SerializeField] private Laser laser = null;
 
     private bool expendingAmmo;
@@ -23,7 +25,7 @@ public class LaserWeapon : MainWeapon
     {
         gameObject.SetActive(true);
         deactivateAfterOff = false;
-        laser.InitializeParameters();
+        laser.InitializeParameters(basePower, maxLength);
         laser.LaserReady += OnLaserReady;
         laser.LaserRoutineEnded += OnLaserShutDown;
     }
