@@ -13,7 +13,6 @@ public class LaserWeapon : MainWeapon
     private bool expendingAmmo;
     private bool deactivateAfterOff;
     private bool discardAfterOff;
-    private Coroutine ammoExpendCoroutine;
     private Coroutine cancelCoroutine;
 
     private void Update()
@@ -48,7 +47,7 @@ public class LaserWeapon : MainWeapon
         laser.transform.rotation = shotRotation;
         laser.Activate();
         shooting = true;
-        ammoExpendCoroutine = StartCoroutine(ExpendEnergy());
+        StartCoroutine(ExpendEnergy());
     }
 
     public override void StopFire()
@@ -98,8 +97,6 @@ public class LaserWeapon : MainWeapon
             yield return new WaitForSeconds(ammoExpendRate);
             OnAmmoExpended();
         }
-
-        ammoExpendCoroutine = null;
     }
 
     private IEnumerator CancelCountdown()
@@ -114,7 +111,6 @@ public class LaserWeapon : MainWeapon
         base.HaltCoroutines();
 
         StopAllCoroutines();
-        ammoExpendCoroutine = null;
         cancelCoroutine = null;
     }
 }
