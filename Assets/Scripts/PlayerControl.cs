@@ -32,6 +32,6 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        character.AddForce(movementAxis * movForce);
+        character.AddRelativeForce(movementAxis * movForce);
     }
 }
