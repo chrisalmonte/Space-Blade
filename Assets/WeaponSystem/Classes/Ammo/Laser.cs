@@ -7,6 +7,9 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] private GameObject laserTip;
+
     [Header("Damage Raycast Type")]
     [SerializeField] private CastType castType;
     [Tooltip("Thickness of box or distance between rays in spread mode")]
@@ -70,12 +73,14 @@ public class Laser : MonoBehaviour
 
         laserShape = new Vector2(0,castType == CastType.Box ? spreadAmount : 0.01f);
         gameObject.SetActive(false);
+        if (laserTip != null) { laserTip.SetActive(false); }
     }
 
     public virtual void Activate()
     {
         UpdateLaserLength();
         gameObject.SetActive(true);
+        if (laserTip != null) { laserTip.SetActive(true); }
         OnLaserReady();
     }
 
@@ -83,6 +88,7 @@ public class Laser : MonoBehaviour
     {
         OnLaserRoutineEnded();
         StopAllCoroutines();
+        if (laserTip != null) { laserTip.SetActive(false); }
         gameObject.SetActive(false);
     }
 
@@ -95,6 +101,8 @@ public class Laser : MonoBehaviour
         laserShape.x = laserLength;
         lineRenderer.SetPosition(0, Vector2.zero);
         lineRenderer.SetPosition(1, Vector2.right * laserLength);
+
+        if (laserTip != null) { laserTip.transform.position = laserEndPoint; }
     }
 
     private void CheckHits()

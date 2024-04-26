@@ -51,7 +51,7 @@ MonoBehaviour:
   initialAmmo: 100
   basePower: 10
   rotateGradually: 1
-  rotationSpeed: 2.1
+  rotationSpeed: 2.7
   rotationSmoothLvl: 2
   ammoExpendRate: 0.05
   activeAfterCancel: 0.15
