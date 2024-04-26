@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8752884324894535852
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8917116644688555847}
+  - component: {fileID: 5859113730078684016}
+  - component: {fileID: 8403050389120519754}
+  m_Layer: 0
+  m_Name: MW_ChargeTest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8917116644688555847
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8752884324894535852}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5859113730078684016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8752884324894535852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15a7d5c1f3c141d4687da5ca6a9bb1c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: 8695e88ab581a514c8a5770ea87f009c, type: 3}
+  weaponName: Test Charge Weapon
+  initialAmmo: 100
+  basePower: 1
+  rotateGradually: 1
+  rotationSpeed: 7.5
+  rotationSmoothLvl: 1
+  chargedPower: 10
+  baseShotSpeed: 25
+  chargedShotSpeed: 70
+  chargeTime: 2
+  chargelostGradually: 1
+  chargeToShoot: 0.75
+  activeAfterCancel: 0.1
+  ammoPrefab: {fileID: 6570260460636381243, guid: 3342f65ecb973fc439bc548f15ef49e8, type: 3}
+  shotPoolDefaultSize: 5
+  shotPoolMaxSize: 20
+--- !u!114 &8403050389120519754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8752884324894535852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0178b89e91a430f4cbd84cd05d7b99fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectID: MW_ChargeTest
