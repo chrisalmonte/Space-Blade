@@ -107,14 +107,20 @@ public class WeaponSystem : MonoBehaviour
 
     public void EquipWeapon(MainWeapon obtainedWeapon)
     {
-        if (currentWeapon.ID.Equals(obtainedWeapon.ID))
-        {
-            IncreaseAmmo(obtainedWeapon.InitialAmmo);
-            return;
-        }
-
         if (currentWeapon != null) 
-        { 
+        {
+            if (currentWeapon.ID.Equals(obtainedWeapon.ID))
+            {
+                IncreaseAmmo(obtainedWeapon.InitialAmmo);
+                return;
+            }
+
+            if (defaultWeapon.ID.Equals(obtainedWeapon.ID))
+            {
+                SwitchToDefaultWeapon();
+                return;
+            }
+
             CancelShoot();
             if (currentWeapon == defaultWeapon) { currentWeapon.Deactivate(); }
             else { currentWeapon.Discard(); }
