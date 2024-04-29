@@ -17,7 +17,7 @@ public class LaserWeapon : MainWeapon
 
     private void Update()
     {
-        if (laser != null) { laser.transform.rotation = shotRotation; }
+        if (laser != null) { laser.transform.rotation = transform.rotation * shotRotation; }
     }
 
     public override void Initialize()
@@ -43,8 +43,8 @@ public class LaserWeapon : MainWeapon
 
             return; 
         }
-        
-        laser.transform.rotation = shotRotation;
+
+        laser.transform.rotation = transform.rotation * shotRotation;
         laser.Activate();
         shooting = true;
         StartCoroutine(ExpendEnergy());

@@ -31,7 +31,7 @@ public class ChargeWeapon : MainWeapon
 
     private void Update()
     {
-        if (heldShot != null) { heldShot.transform.rotation = shotRotation; }
+        if (heldShot != null) { heldShot.transform.rotation = transform.rotation * shotRotation; }
     }
 
     public override void Initialize()
@@ -233,7 +233,7 @@ public class ChargeWeapon : MainWeapon
 
     void OnTakeShotFromPool(Proyectile shot)
     {
-        shot.transform.SetPositionAndRotation(transform.position, shotRotation);
+        shot.transform.SetPositionAndRotation(transform.position, transform.rotation * shotRotation);
         shot.transform.parent = transform;
         (shot as ProyectileCharged).DestroyedWhileHeld += HeldShotDestroyed;
         WeaponDisabled += shot.OnWeaponDestroyed;

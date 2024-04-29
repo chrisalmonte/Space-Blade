@@ -23,6 +23,7 @@ public class Laser : MonoBehaviour
     private Vector3 laserEndPoint;
     private Vector2 laserShape;
     private ContactFilter2D enemyFilter = new ContactFilter2D();
+    private LayerMask onlyObstacles;
     private LineRenderer lineRenderer;
     private List<Collider2D> hitList = new List<Collider2D>();
     private List<Collider2D> hitListSpread = new List<Collider2D>();
@@ -64,6 +65,7 @@ public class Laser : MonoBehaviour
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.useWorldSpace = false;
         enemyFilter.SetLayerMask(LayerMask.GetMask("Enemies"));
+        onlyObstacles = LayerMask.GetMask("Obstacles");
 
         if (castType != CastType.Ray && spreadAmount <= 0)
         {
@@ -93,11 +95,10 @@ public class Laser : MonoBehaviour
     }
 
     private void UpdateLaserLength()
-    {
-        LayerMask onlyObstacles = LayerMask.GetMask("Obstacles");
+    {        
         RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, maxLength, onlyObstacles);
         laserLength = hit.collider != null ? hit.distance : maxLength;
-        laserEndPoint = transform.position + (transform.right*laserLength);
+        laserEndPoint = transform.position + (transform.right * laserLength);
         laserShape.x = laserLength;
         lineRenderer.SetPosition(0, Vector2.zero);
         lineRenderer.SetPosition(1, Vector2.right * laserLength);

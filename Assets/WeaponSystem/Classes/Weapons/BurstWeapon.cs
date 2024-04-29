@@ -111,7 +111,7 @@ public class BurstWeapon : MainWeapon
 
     void OnTakeShotFromPool(Proyectile shot)
     {
-        shot.transform.SetPositionAndRotation(transform.position, shotRotation);
+        shot.transform.SetPositionAndRotation(transform.position, transform.rotation * shotRotation);
         WeaponDestroyed += shot.OnWeaponDestroyed;
         shot.gameObject.SetActive(true);
         shot.Deploy();
