@@ -12,16 +12,18 @@ public class RigController : MonoBehaviour
     private Camera mainCam;
     private Vector2[] edgePoints = new Vector2[5];
 
-    [SerializeField] private SplineContainer levelRail;
+    [SerializeField] private SplineContainer rail;
+    [SerializeField] private SplineContainerData railParameters;
     [SerializeField] private bool followRail;
-    [SerializeField] private int splineI;
+
+    private int splineI;
     private float splineT;
-    [SerializeField] private float splineSeconds;
-    [SerializeField] private bool followSplineRot;
-    [SerializeField] private bool splineLoop;
+    private float timeInSpline;
+    private bool followSplineRot;
+    private bool splineLoop;
+
     private float3 position;
     private float3 tangent;
-    private float3 upVector;
 
     private void Update()
     {
@@ -33,6 +35,9 @@ public class RigController : MonoBehaviour
         screenCollider = GetComponent<EdgeCollider2D>();
         mainCam = Camera.main;
         SetEdgeColliderSize();
+
+        //Debug
+        LoadSplineParameters();
     }
 
     private void SetEdgeColliderSize()
@@ -48,22 +53,50 @@ public class RigController : MonoBehaviour
 
     private void MoveAlongRail()
     {
-        levelRail.Evaluate(splineI, splineT, out position, out tangent, out upVector);
+        rail.Evaluate(splineI, splineT, out position, out tangent, out _);
 
         transform.position = position;
         transform.rotation = Quaternion.LookRotation(Vector3.forward, 
             followSplineRot ? Vector2.Perpendicular(new Vector2(tangent.x,tangent.y)) : Vector3.up);
 
-        splineT += Time.deltaTime / (splineSeconds > 0 ? splineSeconds : 1);
+        splineT += Time.deltaTime / (timeInSpline > 0 ? timeInSpline : 1);
 
         if (splineT > 1) 
         {
-            if (splineI >= levelRail.Splines.Count - 1 && !splineLoop) { followRail = false; }
-            else
-            {
-                splineI += splineLoop ? 0 : 1;
-                splineT = 0;
+            if (splineI >= rail.Splines.Count - 1 && !splineLoop) 
+            { 
+                followRail = false;
+                return;
             }
+
+            if (!splineLoop)
+            {
+                splineI += 1;
+                LoadSplineParameters();
+            }
+
+            splineT = 0;
         }
+    }
+
+    private void LoadSplineParameters()
+    {
+        if (railParameters == null) { return; }
+
+        timeInSpline = rail.Splines[splineI].GetLength() / (railParameters.Data(splineI).speed == 0 ? 1 : railParameters.Data(splineI).speed);
+        followSplineRot = railParameters.Data(splineI).followRotation;
+        splineLoop = railParameters.Data(splineI).loop;
+    }
+
+    public void BreakRailLoop() { splineLoop = false; }
+    public void SetMoveAlongRail(bool move) { followRail = move; }
+
+    public void LoadRail(SplineContainer container, SplineContainerData data)
+    {
+        rail = container;
+        railParameters = data;
+        splineI = 0;
+        splineT = 0;
+        LoadSplineParameters();
     }
 }

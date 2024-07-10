@@ -186,7 +186,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.2, y: 1.74}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -200,8 +200,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 11577533}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 118, y: 2.14, z: 0}
-  m_LocalScale: {x: 6.2149, y: 6.2149, z: 6.2149}
+  m_LocalPosition: {x: 118.37, y: 0.96, z: 0}
+  m_LocalScale: {x: 9.107968, y: 9.107968, z: 9.107968}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -670,6 +670,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1328511130}
   - component: {fileID: 1328511129}
+  - component: {fileID: 1328511131}
   m_Layer: 0
   m_Name: Spline
   m_TagString: Untagged
@@ -1048,6 +1049,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1328511131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1328511128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fe0cf3f1ae97314898a5f2e67a1427f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  splineData: {fileID: 11400000, guid: b7ba700607601e74ab50ee0257175c21, type: 2}
 --- !u!1 &2121512223
 GameObject:
   m_ObjectHideFlags: 0
