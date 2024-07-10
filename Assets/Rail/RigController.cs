@@ -19,9 +19,12 @@ public class RigController : MonoBehaviour
     private int splineI;
     private float splineT;
     private float timeInSpline;
+    private float targetCameraSize;
+    private float reachCamSizeAt;
     private bool followSplineRot;
     private bool splineLoop;
 
+    private Coroutine camCoroutine;
     private float3 position;
     private float3 tangent;
 
@@ -69,13 +72,14 @@ public class RigController : MonoBehaviour
                 return;
             }
 
+            splineT = 0;
+
             if (!splineLoop)
             {
                 splineI += 1;
                 LoadSplineParameters();
+                CheckTransitions();
             }
-
-            splineT = 0;
         }
     }
 
@@ -86,6 +90,29 @@ public class RigController : MonoBehaviour
         timeInSpline = rail.Splines[splineI].GetLength() / (railParameters.Data(splineI).speed == 0 ? 1 : railParameters.Data(splineI).speed);
         followSplineRot = railParameters.Data(splineI).followRotation;
         splineLoop = railParameters.Data(splineI).loop;
+        targetCameraSize = railParameters.Data(splineI).cameraSize;
+        reachCamSizeAt = railParameters.Data(splineI).reachCamSizeAt;
+    }
+
+    private void CheckTransitions()
+    {
+        if (mainCam.orthographicSize != targetCameraSize)
+        {
+            if (camCoroutine != null) { StopCoroutine(camCoroutine); }
+            camCoroutine = StartCoroutine(CameraTransition());
+        }
+    }
+
+    private IEnumerator CameraTransition()
+    {
+        float initialValue = mainCam.orthographicSize;
+
+        while(mainCam.orthographicSize != targetCameraSize)
+        {
+            mainCam.orthographicSize = Mathf.Lerp(initialValue, targetCameraSize, Mathf.Clamp01(Mathf.InverseLerp(0, reachCamSizeAt, splineT)));
+            SetEdgeColliderSize();
+            yield return null;
+        }
     }
 
     public void BreakRailLoop() { splineLoop = false; }
@@ -98,5 +125,6 @@ public class RigController : MonoBehaviour
         splineI = 0;
         splineT = 0;
         LoadSplineParameters();
+        CheckTransitions();
     }
 }

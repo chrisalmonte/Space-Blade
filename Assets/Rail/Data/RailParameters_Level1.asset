@@ -14,12 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parameters:
   - speed: 10
-    cameraDistance: 0
-    reachCamDistAt: 0
+    reachSpeedAt: 0
+    cameraSize: 5
+    reachCamSizeAt: 0
     followRotation: 0
     loop: 0
-  - speed: 10
-    cameraDistance: 0
-    reachCamDistAt: 0
+  - speed: 15
+    reachSpeedAt: 0.5
+    cameraSize: 15
+    reachCamSizeAt: 0.5
     followRotation: 1
     loop: 1
